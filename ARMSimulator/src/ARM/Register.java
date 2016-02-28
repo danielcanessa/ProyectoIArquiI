@@ -257,53 +257,53 @@ public class Register {
         String out = "";
         switch (aux) {
             case "r0":
-                out=this.r0;
+                out = this.r0;
                 break;
             case "r1":
-                out=this.r1;
+                out = this.r1;
                 break;
             case "r2":
-                out=this.r2;
+                out = this.r2;
                 break;
             case "r3":
-                out=this.r3;
+                out = this.r3;
                 break;
             case "r4":
-                out=this.r4;
+                out = this.r4;
                 break;
             case "r5":
-                out=this.r5;
+                out = this.r5;
                 break;
             case "r6":
-                out=this.r6;
+                out = this.r6;
                 break;
             case "r7":
-                out=this.r7;
+                out = this.r7;
                 break;
             case "r8":
-                out=this.r8;
+                out = this.r8;
                 break;
             case "r9":
-                out=this.r9;
+                out = this.r9;
                 break;
             case "r10":
-                out=this.r10;
+                out = this.r10;
                 break;
             case "r11":
-                out=this.r11;
+                out = this.r11;
                 break;
             case "r12":
-                out=this.r12;
+                out = this.r12;
                 break;
             case "r13":
-                out=this.r13;
+                out = this.r13;
                 break;
             case "r14":
-                out=this.r14;
+                out = this.r14;
                 break;
             case "r15":
-                out=this.r15;
-                break;                
+                out = this.r15;
+                break;
             default:
                 System.out.println("Error en el metodo find register");
                 break;
@@ -311,9 +311,9 @@ public class Register {
         return out;
 
     }
-    
-    public void setRegister(String register, String data) {        
-        String aux = register.toLowerCase();        
+
+    public void setRegister(String register, String data) {
+        String aux = register.toLowerCase();
         switch (aux) {
             case "r0":
                 this.setR0(data);
@@ -330,7 +330,7 @@ public class Register {
             case "r4":
                 this.setR4(data);
                 break;
-            case "r5":               
+            case "r5":
                 this.setR5(data);
                 break;
             case "r6":
@@ -362,11 +362,31 @@ public class Register {
                 break;
             case "r15":
                 this.setR15(data);
-                break;                
+                break;
             default:
                 System.out.println("Error en el metodo set register");
                 break;
-        }    
+        }
+    }
+
+    public void cleanRegister() {
+        this.setR0("");
+        this.setR1("");
+        this.setR2("");
+        this.setR3("");
+        this.setR4("");
+        this.setR5("");
+        this.setR6("");
+        this.setR7("");
+        this.setR8("");
+        this.setR9("");
+        this.setR10("");
+        this.setR11("");
+        this.setR12("");
+        this.setR13("");
+        this.setR14("");
+        this.setR15("");
+
     }
 
 }

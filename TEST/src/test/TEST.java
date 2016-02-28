@@ -31,6 +31,8 @@ public class TEST {
         System.out.println(b);
         System.out.println(c);
         System.out.println(d);
+        
+        System.out.println(Long.valueOf("10203040").longValue());
        
     }
 

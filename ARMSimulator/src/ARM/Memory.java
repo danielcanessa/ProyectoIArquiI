@@ -42,6 +42,13 @@ public class Memory {
         return this.memory.get(slot);
     }
     
+    public void cleanMemory()
+    {
+        for (int i = 0; i < this.memory.size(); i++) {
+            this.memory.set(i, "");
+        }
+    }
+    
     public String loadWord(int slotMSB)
     {
         String x = "";
