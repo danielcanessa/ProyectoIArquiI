@@ -144,6 +144,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        memoryTable.setFont(new java.awt.Font("Calibri Light", 0, 12)); // NOI18N
         memoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -152,6 +153,12 @@ public class MainFrame extends javax.swing.JFrame {
                 "Position", "Data"
             }
         ));
+        memoryTable.setFillsViewportHeight(true);
+        memoryTable.setFocusable(false);
+        memoryTable.setGridColor(java.awt.SystemColor.controlShadow);
+        memoryTable.setRowHeight(24);
+        memoryTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
+        memoryTable.setShowHorizontalLines(false);
         jScrollPane1.setViewportView(memoryTable);
 
         saveMemoryButton.setText("Save");
@@ -161,6 +168,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        registerTable.setFont(new java.awt.Font("Calibri Light", 0, 12)); // NOI18N
         registerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
@@ -177,6 +185,12 @@ public class MainFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        registerTable.setAutoscrolls(false);
+        registerTable.setFillsViewportHeight(true);
+        registerTable.setFocusable(false);
+        registerTable.setGridColor(java.awt.SystemColor.controlShadow);
+        registerTable.setRowHeight(24);
+        registerTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         jScrollPane2.setViewportView(registerTable);
         if (registerTable.getColumnModel().getColumnCount() > 0) {
             registerTable.getColumnModel().getColumn(0).setResizable(false);
@@ -243,7 +257,8 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addComponent(runButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 25, Short.MAX_VALUE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(radioButtonWords)
