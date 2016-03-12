@@ -116,8 +116,6 @@ public class MainFrame extends javax.swing.JFrame {
         memoryTable = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         registerTable = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        codeText = new javax.swing.JTextArea();
         runButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         radioButtonWords = new javax.swing.JRadioButton();
@@ -137,6 +135,8 @@ public class MainFrame extends javax.swing.JFrame {
         CarryText = new javax.swing.JLabel();
         oVerflowLabel = new javax.swing.JLabel();
         OverflowText = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        codeText = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -204,10 +204,6 @@ public class MainFrame extends javax.swing.JFrame {
             registerTable.getColumnModel().getColumn(14).setResizable(false);
             registerTable.getColumnModel().getColumn(15).setResizable(false);
         }
-
-        codeText.setColumns(20);
-        codeText.setRows(5);
-        jScrollPane3.setViewportView(codeText);
 
         runButton.setText("Run");
         runButton.addActionListener(new java.awt.event.ActionListener() {
@@ -379,21 +375,23 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jScrollPane4.setViewportView(codeText);
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 1373, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(runButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cleanMemoryButton)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1373, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(37, 37, 37)
@@ -417,8 +415,8 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1))
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 816, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 805, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addGap(8, 8, 8)
@@ -445,6 +443,15 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cleanMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanMemoryButtonActionPerformed
+        this.memory.cleanMemory();
+        this.register.cleanRegister();
+        this.conditionFlag.cleanFlags();
+        this.fillConditionalFlags();
+        this.fillMemoryTable();
+        this.fillRegisterTable();
+    }//GEN-LAST:event_cleanMemoryButtonActionPerformed
+
     private void saveMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMemoryButtonActionPerformed
         if (this.byteIsSelected) {
             for (int count = 0; count < modelMemory.getRowCount(); count++) {
@@ -464,20 +471,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         }
 
-
     }//GEN-LAST:event_saveMemoryButtonActionPerformed
-
-    private void radioButtonWordsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioButtonWordsItemStateChanged
-
-        this.fillMemoryTable();
-        this.checkEdit.setSelected(false);
-    }//GEN-LAST:event_radioButtonWordsItemStateChanged
-
-    private void radioButtonBytesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioButtonBytesItemStateChanged
-        this.byteIsSelected = this.radioButtonBytes.isSelected();
-        this.fillMemoryTable();
-        this.checkEdit.setSelected(false);
-    }//GEN-LAST:event_radioButtonBytesItemStateChanged
 
     private void checkEditItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_checkEditItemStateChanged
 
@@ -485,8 +479,19 @@ public class MainFrame extends javax.swing.JFrame {
         modelMemory.setColumnEditable(column, this.checkEdit.isSelected());
         this.memoryTable.setModel(modelMemory);
 
-
     }//GEN-LAST:event_checkEditItemStateChanged
+
+    private void radioButtonBytesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioButtonBytesItemStateChanged
+        this.byteIsSelected = this.radioButtonBytes.isSelected();
+        this.fillMemoryTable();
+        this.checkEdit.setSelected(false);
+    }//GEN-LAST:event_radioButtonBytesItemStateChanged
+
+    private void radioButtonWordsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_radioButtonWordsItemStateChanged
+
+        this.fillMemoryTable();
+        this.checkEdit.setSelected(false);
+    }//GEN-LAST:event_radioButtonWordsItemStateChanged
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
 
@@ -497,27 +502,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         String[] lines = this.codeText.getText().split("\\n");
         for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
-            //System.out.println(lines[i]);  
-            
+            //System.out.println(lines[i]);
+
             operation.selectOperation(lines[i]);
             this.fillConditionalFlags();
             this.fillMemoryTable();
             this.fillRegisterTable();
         }
-        this.hashLabel.printHashLabel();
-        
-        
+     //   this.hashLabel.printHashLabel();
 
     }//GEN-LAST:event_runButtonActionPerformed
-
-    private void cleanMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanMemoryButtonActionPerformed
-        this.memory.cleanMemory();
-        this.register.cleanRegister();
-        this.conditionFlag.cleanFlags();
-        this.fillConditionalFlags();
-        this.fillMemoryTable();
-        this.fillRegisterTable();
-    }//GEN-LAST:event_cleanMemoryButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -593,7 +587,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroupMemory;
     private javax.swing.JCheckBox checkEdit;
     private javax.swing.JButton cleanMemoryButton;
-    private javax.swing.JTextArea codeText;
+    private javax.swing.JTextPane codeText;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -601,7 +595,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JLabel oVerflowLabel;
