@@ -1,0 +1,65 @@
+mov R4, #0xFF
+mov R5, #10
+mov R6, #20
+mov R7, #30
+mov R8, #0xFF
+mov R9, #0xFFFF06
+mov R10, #0xFFFF07
+mov R11, #0xFFFF08
+mov R12, #0xFFFF09
+add R0,R5,R6
+add R0,R0,R0
+add R1, R4, R8
+mov R3, #0xF
+mov R4, #1
+add R0,R3,#0XF
+
+
+
+mov r3,#10
+
+mov r1, #0x00
+mov r3, #20
+mov r2,#0xABCDEF
+str r2,[r1,#0x20]
+str r2,[r1],#0x40
+str r2,[r1,r3]
+str r2,[r1],r3
+str r2,[r1]
+
+
+
+Papaya
+mov R4, #0xFF
+Daniel
+mov R5, #10
+mov R6, #20
+mov R7, #30
+Canessa
+mov R8, #0xFF
+mov R9, #0xFFFF06
+mov R10, #0xFFFF07
+mov R11, #0xFFFF08
+mov R12, #0xFFFF09
+add R0,R5,R6
+Pablo
+add R0,R0,R0
+add R1, R4, R8
+mov R3, #0xF
+mov R4, #1
+add R0,R3,#0XF
+
+Chat
+
+mov r3,#10
+
+mov r1, #0x00
+mov r3, #20
+mov r2,#0xABCDEF
+str r2,[r1,#0x20]
+str r2,[r1],#0x40
+Juan
+str r2,[r1,r3]
+str r2,[r1],r3
+str r2,[r1]
+End

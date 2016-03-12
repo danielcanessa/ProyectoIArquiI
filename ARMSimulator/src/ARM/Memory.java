@@ -25,7 +25,7 @@ public class Memory {
     
     public void storeByte(int slot, String data)
     {
-        this.memory.set(slot, data);    
+        this.memory.set(slot, data.toUpperCase());    
     }
     
     public void storeWord(int slotMSB, String word)
@@ -71,7 +71,7 @@ public class Memory {
     
     public String intToHex(int number)
     {
-        return Integer.toHexString(number);
+        return Integer.toHexString(number).toUpperCase();
     }
     
     

@@ -39,7 +39,7 @@ public class Register {
      * @param r0 the r0 to set
      */
     public void setR0(String r0) {
-        this.r0 = r0;
+        this.r0 = r0.toUpperCase();
     }
 
     /**
@@ -53,7 +53,7 @@ public class Register {
      * @param r1 the r1 to set
      */
     public void setR1(String r1) {
-        this.r1 = r1;
+        this.r1 = r1.toUpperCase();
     }
 
     /**
@@ -67,7 +67,7 @@ public class Register {
      * @param r2 the r2 to set
      */
     public void setR2(String r2) {
-        this.r2 = r2;
+        this.r2 = r2.toUpperCase();
     }
 
     /**
@@ -81,7 +81,7 @@ public class Register {
      * @param r3 the r3 to set
      */
     public void setR3(String r3) {
-        this.r3 = r3;
+        this.r3 = r3.toUpperCase();
     }
 
     /**
@@ -95,7 +95,7 @@ public class Register {
      * @param r4 the r4 to set
      */
     public void setR4(String r4) {
-        this.r4 = r4;
+        this.r4 = r4.toUpperCase();
     }
 
     /**
@@ -109,7 +109,7 @@ public class Register {
      * @param r5 the r5 to set
      */
     public void setR5(String r5) {
-        this.r5 = r5;
+        this.r5 = r5.toUpperCase();
     }
 
     /**
@@ -123,7 +123,7 @@ public class Register {
      * @param r6 the r6 to set
      */
     public void setR6(String r6) {
-        this.r6 = r6;
+        this.r6 = r6.toUpperCase();
     }
 
     /**
@@ -137,7 +137,7 @@ public class Register {
      * @param r7 the r7 to set
      */
     public void setR7(String r7) {
-        this.r7 = r7;
+        this.r7 = r7.toUpperCase();
     }
 
     /**
@@ -151,7 +151,7 @@ public class Register {
      * @param r8 the r8 to set
      */
     public void setR8(String r8) {
-        this.r8 = r8;
+        this.r8 = r8.toUpperCase();
     }
 
     /**
@@ -165,7 +165,7 @@ public class Register {
      * @param r9 the r9 to set
      */
     public void setR9(String r9) {
-        this.r9 = r9;
+        this.r9 = r9.toUpperCase();
     }
 
     /**
@@ -179,7 +179,7 @@ public class Register {
      * @param r10 the r10 to set
      */
     public void setR10(String r10) {
-        this.r10 = r10;
+        this.r10 = r10.toUpperCase();
     }
 
     /**
@@ -193,7 +193,7 @@ public class Register {
      * @param r11 the r11 to set
      */
     public void setR11(String r11) {
-        this.r11 = r11;
+        this.r11 = r11.toUpperCase();
     }
 
     /**
@@ -207,7 +207,7 @@ public class Register {
      * @param r12 the r12 to set
      */
     public void setR12(String r12) {
-        this.r12 = r12;
+        this.r12 = r12.toUpperCase();
     }
 
     /**
@@ -221,7 +221,7 @@ public class Register {
      * @param r13 the r13 to set
      */
     public void setR13(String r13) {
-        this.r13 = r13;
+        this.r13 = r13.toUpperCase();
     }
 
     /**
@@ -235,7 +235,7 @@ public class Register {
      * @param r14 the r14 to set
      */
     public void setR14(String r14) {
-        this.r14 = r14;
+        this.r14 = r14.toUpperCase();
     }
 
     /**
@@ -249,11 +249,11 @@ public class Register {
      * @param r15 the r15 to set
      */
     public void setR15(String r15) {
-        this.r15 = r15;
+        this.r15 = r15.toUpperCase();
     }
 
     public String findRegister(String register) {
-        String aux = register.toLowerCase();
+        String aux = register.toLowerCase().trim();
         String out = "";
         switch (aux) {
             case "r0":
@@ -308,12 +308,12 @@ public class Register {
                 System.out.println("Error en el metodo find register");
                 break;
         }
-        return out;
+        return out.toLowerCase();
 
     }
 
-    public void setRegister(String register, String data) {
-        String aux = register.toLowerCase();
+    public void setRegister(String register, String data) {        
+        String aux = register.toLowerCase().replace(" ", "").trim();
         switch (aux) {
             case "r0":
                 this.setR0(data);
@@ -370,22 +370,22 @@ public class Register {
     }
 
     public void cleanRegister() {
-        this.setR0("");
-        this.setR1("");
-        this.setR2("");
-        this.setR3("");
-        this.setR4("");
-        this.setR5("");
-        this.setR6("");
-        this.setR7("");
-        this.setR8("");
-        this.setR9("");
-        this.setR10("");
-        this.setR11("");
-        this.setR12("");
-        this.setR13("");
-        this.setR14("");
-        this.setR15("");
+        this.setR0("0");
+        this.setR1("0");
+        this.setR2("0");
+        this.setR3("0");
+        this.setR4("0");
+        this.setR5("0");
+        this.setR6("0");
+        this.setR7("0");
+        this.setR8("0");
+        this.setR9("0");
+        this.setR10("0");
+        this.setR11("0");
+        this.setR12("0");
+        this.setR13("0");
+        this.setR14("0");
+        this.setR15("0");
 
     }
 
