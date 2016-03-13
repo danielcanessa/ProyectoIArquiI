@@ -137,6 +137,11 @@ public class MainFrame extends javax.swing.JFrame {
         OverflowText = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         codeText = new javax.swing.JTextPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -429,6 +434,30 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
+        jMenuBar1.setBorder(null);
+        jMenuBar1.setFocusTraversalPolicy(null);
+        jMenuBar1.setMaximumSize(new java.awt.Dimension(233, 32767));
+        jMenuBar1.setMinimumSize(new java.awt.Dimension(0, 0));
+        jMenuBar1.setPreferredSize(new java.awt.Dimension(233, 19));
+
+        jMenu1.setText("File");
+
+        jMenuItem1.setText("Generate Code");
+        jMenu1.add(jMenuItem1);
+        jMenu1.add(jSeparator1);
+
+        jMenuItem2.setText("Exit");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -500,7 +529,13 @@ public class MainFrame extends javax.swing.JFrame {
         this.hashLabel.cleanHashLabel();
         Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel);
 
+ 
+                
         String[] lines = this.codeText.getText().split("\\n");
+        
+        WriteTxtFile file = new WriteTxtFile ();
+        file.writeFile(lines);
+        
         for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
             //System.out.println(lines[i]);
 
@@ -512,6 +547,10 @@ public class MainFrame extends javax.swing.JFrame {
      //   this.hashLabel.printHashLabel();
 
     }//GEN-LAST:event_runButtonActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -590,12 +629,17 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextPane codeText;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JLabel oVerflowLabel;

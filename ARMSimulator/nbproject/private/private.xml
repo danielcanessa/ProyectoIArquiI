@@ -5,8 +5,11 @@
         <group>
             <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/MainFrame.java</file>
             <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Register.java</file>
+            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/WriteTxtFile.java</file>
             <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Operation.java</file>
             <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Memory.java</file>
+            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/HashLabel.java</file>
+            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/ConditionFlags.java</file>
         </group>
     </open-files>
 </project-private>

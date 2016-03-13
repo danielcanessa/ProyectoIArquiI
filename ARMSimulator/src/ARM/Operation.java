@@ -40,7 +40,7 @@ public class Operation {
     
     public void selectOperation(String instruction) {
         
-        this.mov("r13", Long.parseLong(Integer.toString(this.pcCounter)));
+        this.mov("r13", Long.parseLong(Integer.toString(this.pcCounter*4)));
         
         String fixInstruction = instruction.toLowerCase().trim();
        
