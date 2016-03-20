@@ -15,9 +15,11 @@ import java.util.List;
 public class HashLabel {
 
     List<List<String>> hashTableLabels;
+    ReserveInstructions reserveInstructions;
 
-    public HashLabel() {
+    public HashLabel(ReserveInstructions reserveInstructions) {
         this.hashTableLabels = new ArrayList<>();
+        this.reserveInstructions = reserveInstructions;
     }
 
     public void addLabel(String instruction, int pcCounter) {
@@ -33,22 +35,42 @@ public class HashLabel {
 
         }
     }
-    
-    public void cleanHashLabel()
-    {
+
+    public void cleanHashLabel() {
         this.hashTableLabels.clear();
     }
 
     public int findLabel(String label) {
-        String aux = label.toLowerCase().trim();
+        //System.out.println(label);
+
         int out = -1;
-         for (int i = 0; i < hashTableLabels.size(); i++) {
-            if(hashTableLabels.get(i).get(0)==label.toLowerCase().trim())
-            {
-                out = Integer.parseInt(hashTableLabels.get(i).get(1));            
+
+        for (int i = 0; i < hashTableLabels.size(); i++) {
+            if (hashTableLabels.get(i).get(0).equals(label.toLowerCase().trim())) {
+                out = Integer.parseInt(hashTableLabels.get(i).get(1));
             }
-        }        
+        }
         return out;
+
+    }
+
+    public void fillHashTable(String instruction, int position) {
+
+        String fixInstruction = instruction.toLowerCase().trim();
+
+        if (this.reserveInstructions.isDataProcessingInstructions(fixInstruction)
+                || this.reserveInstructions.isMultiplyInstructions(fixInstruction)
+                || this.reserveInstructions.isMemoryInstructions(fixInstruction)
+                || this.reserveInstructions.isBranchInstructions(fixInstruction)) {
+            //       
+        } else if (!instruction.contains(" ")) {
+            if (fixInstruction.length() != 0) {
+                System.out.println("Label: " + fixInstruction + ", size: " + fixInstruction.length());
+                this.addLabel(fixInstruction, position);
+            }
+        } else {
+            System.out.println("Instruccion no reconocida, no aplica como label: " + instruction);
+        }
 
     }
 

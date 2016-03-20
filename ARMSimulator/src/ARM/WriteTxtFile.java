@@ -5,7 +5,10 @@
  */
 package ARM;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -14,27 +17,38 @@ import java.io.PrintWriter;
  */
 public class WriteTxtFile {
 
-    FileWriter fichero ;
+    FileWriter fichero;
     PrintWriter pw;
-    
-    public WriteTxtFile()
-    {
-        this.fichero=null;
+
+    public WriteTxtFile() {
+        this.fichero = null;
         this.pw = null;
     }
 
-    public void writeFile(String[] lines) {
+    public String readFile(String root) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(root))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            String read = sb.toString();
+            return read;
+        }
+    }
+
+    public void writeFile(String[] lines, String root) {
         try {
-            fichero = new FileWriter("codeARMJTextPane.txt");
+            fichero = new FileWriter(root);
             pw = new PrintWriter(fichero);
 
             for (int i = 0; i < lines.length; i++) {
-                if(lines[i]!="\\n")
-                {
+                if (lines[i].length() != 1) {
                     pw.println(lines[i]);
-                    
                 }
-                
             }
 
         } catch (Exception e) {

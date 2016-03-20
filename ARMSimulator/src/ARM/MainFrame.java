@@ -1,8 +1,12 @@
 package ARM;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -26,13 +30,19 @@ public class MainFrame extends javax.swing.JFrame {
     private Register register;
     private ConditionFlags conditionFlag;
     private HashLabel hashLabel;
+    private ReserveInstructions reserveInstructions;
 
     public MainFrame() {
         initComponents();
+
+        TextLineNumber tln = new TextLineNumber(this.codeText);
+        this.jScrollPane5.setRowHeaderView(tln);
+
         this.setResizable(false);
         this.memory = new Memory();
         this.register = new Register();
-        this.hashLabel = new HashLabel();
+        this.reserveInstructions = new ReserveInstructions();
+        this.hashLabel = new HashLabel(reserveInstructions);
         this.conditionFlag = new ConditionFlags();
         this.fillConditionalFlags();
     }
@@ -135,12 +145,16 @@ public class MainFrame extends javax.swing.JFrame {
         CarryText = new javax.swing.JLabel();
         oVerflowLabel = new javax.swing.JLabel();
         OverflowText = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        codeText = new javax.swing.JTextPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        OutputText = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        codeText = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -261,7 +275,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(radioButtonWords)
                     .addComponent(radioButtonBytes))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 3, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -380,7 +394,14 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jScrollPane4.setViewportView(codeText);
+        OutputText.setColumns(20);
+        OutputText.setRows(5);
+        jScrollPane3.setViewportView(OutputText);
+
+        codeText.setColumns(20);
+        codeText.setFont(new java.awt.Font("Calibri", 0, 16)); // NOI18N
+        codeText.setRows(5);
+        jScrollPane5.setViewportView(codeText);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -396,7 +417,8 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1373, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4))
+                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane5))
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(37, 37, 37)
@@ -415,13 +437,13 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 848, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 805, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addGap(8, 8, 8)
@@ -430,21 +452,37 @@ public class MainFrame extends javax.swing.JFrame {
                                     .addComponent(cleanMemoryButton)))
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jMenuBar1.setBorder(null);
-        jMenuBar1.setFocusTraversalPolicy(null);
         jMenuBar1.setMaximumSize(new java.awt.Dimension(233, 32767));
-        jMenuBar1.setMinimumSize(new java.awt.Dimension(0, 0));
         jMenuBar1.setPreferredSize(new java.awt.Dimension(233, 19));
 
         jMenu1.setText("File");
 
+        jMenuItem3.setText("Save");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+
+        jMenuItem4.setText("Load");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem4);
+        jMenu1.add(jSeparator1);
+
         jMenuItem1.setText("Generate Code");
         jMenu1.add(jMenuItem1);
-        jMenu1.add(jSeparator1);
 
         jMenuItem2.setText("Exit");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -479,6 +517,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.fillConditionalFlags();
         this.fillMemoryTable();
         this.fillRegisterTable();
+
     }//GEN-LAST:event_cleanMemoryButtonActionPerformed
 
     private void saveMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMemoryButtonActionPerformed
@@ -522,35 +561,90 @@ public class MainFrame extends javax.swing.JFrame {
         this.checkEdit.setSelected(false);
     }//GEN-LAST:event_radioButtonWordsItemStateChanged
 
-    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
 
+    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+        //Se limpia todos los registros y cuadro de texto de output
         this.register.cleanRegister();
         this.conditionFlag.cleanFlags();
         this.hashLabel.cleanHashLabel();
-        Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel);
+        this.OutputText.setText("Output: \r\n");
 
- 
+        //Se obtiene el código del cuadro del texto, se le quitan tabs, líneas en blanco, múltiples espacios
+        String[] original = this.codeText.getText().split("\\n");
+        this.codeText.setText(null);
+        for (String line : original) {
+            line = line.replaceAll("\t", " ").replaceAll("^ +| +$|( )+", "$1").trim();
+            if (line.length() > 0) {
+                this.codeText.append(line + "\n");
                 
-        String[] lines = this.codeText.getText().split("\\n");
-        
-        WriteTxtFile file = new WriteTxtFile ();
-        file.writeFile(lines);
-        
-        for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
-            //System.out.println(lines[i]);
-
-            operation.selectOperation(lines[i]);
-            this.fillConditionalFlags();
-            this.fillMemoryTable();
-            this.fillRegisterTable();
+            }
         }
-     //   this.hashLabel.printHashLabel();
+
+        //Contiene el texto corregido
+        String[] lines = this.codeText.getText().split("\\n");
+
+        //Se escribe el archivo de texto con el código
+        WriteTxtFile file = new WriteTxtFile();
+        file.writeFile(lines, "codeARMJTextPane.txt");
+
+        
+        
+        
+        
+        //Aqui va su código//
+        //Para escribir en la "consola" de la aplicacion pone: this.OutputText.append("texto que quiere que se escriba"+"\n");
+        
+        
+        
+        
+        
+        if (this.OutputText.getText().length() < 11) {
+            for (int i = 0; i < lines.length; i++) {
+                this.hashLabel.fillHashTable(lines[i], i);
+            }
+            Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel, this.reserveInstructions, this.OutputText);
+            for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
+                System.out.println("Line: " + lines[i]);
+                operation.selectOperation(lines[i]);
+                this.fillConditionalFlags();
+                this.fillMemoryTable();
+                this.fillRegisterTable();
+            }
+        }
+
 
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         System.exit(0);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String[] lines = this.codeText.getText().split("\\n");
+            WriteTxtFile file = new WriteTxtFile();
+            file.writeFile(lines, fileChooser.getSelectedFile() + ".arm");
+
+            // save to file
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("ARM", "arm");
+        fileChooser.addChoosableFileFilter(filter);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                WriteTxtFile file = new WriteTxtFile();
+                this.codeText.setText(file.readFile(fileChooser.getSelectedFile().toString()));
+                // load from file
+            } catch (IOException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -620,25 +714,29 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel CarryText;
     private javax.swing.JLabel NegativeLabel;
     private javax.swing.JLabel NegativeText;
+    private javax.swing.JTextArea OutputText;
     private javax.swing.JLabel OverflowText;
     private javax.swing.JLabel ZeroLabel;
     private javax.swing.JLabel ZeroText;
     private javax.swing.ButtonGroup buttonGroupMemory;
     private javax.swing.JCheckBox checkEdit;
     private javax.swing.JButton cleanMemoryButton;
-    private javax.swing.JTextPane codeText;
+    private javax.swing.JTextArea codeText;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTable memoryTable;

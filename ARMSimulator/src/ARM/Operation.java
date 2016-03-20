@@ -7,6 +7,7 @@ package ARM;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -19,75 +20,166 @@ public class Operation {
     ConditionFlags conditionFlag;
     HashLabel hashLabel;
     int pcCounter;
-    List<List<String>> hashTableLabels ;
+    List<List<String>> hashTableLabels;
+    ReserveInstructions reserveInstructions;
+    JTextArea OutputText;
 
-    public Operation(Register bankRegister, Memory memory, ConditionFlags conditionFlag,HashLabel hashLabel) {       
-        this.hashTableLabels= new ArrayList<>();
+    public Operation(Register bankRegister, Memory memory, ConditionFlags conditionFlag, HashLabel hashLabel, ReserveInstructions reserveInstructions, JTextArea OutputText) {
+        this.hashTableLabels = new ArrayList<>();
         this.bankRegister = bankRegister;
         this.memory = memory;
         this.conditionFlag = conditionFlag;
-        this.pcCounter=0;
-        this.hashLabel=hashLabel;
+        this.pcCounter = 0;
+        this.hashLabel = hashLabel;
+        this.reserveInstructions = reserveInstructions;
+        this.OutputText=OutputText;
 
     }
-    
-    
 
-    public int getPCCounter()
-    {
+   
+    public int getPCCounter() {
         return this.pcCounter;
     }
-    
+
     public void selectOperation(String instruction) {
-        
-        this.mov("r13", Long.parseLong(Integer.toString(this.pcCounter*4)));
-        
+        //OutputText.setText(OutputText.getText()+"Instrucción ejecutada: "+instruction+"\r\n");
+     
+        // System.out.println(instruction);
+      
         String fixInstruction = instruction.toLowerCase().trim();
-       
-        if (fixInstruction.contains("mov") || fixInstruction.contains("add") || fixInstruction.contains("sub") || fixInstruction.contains("eor")
-                || fixInstruction.contains("and") || fixInstruction.contains("rsb") || fixInstruction.contains("sbc") || fixInstruction.contains("rsc")
-                || fixInstruction.contains("orr") || fixInstruction.contains("lsl") || fixInstruction.contains("asr") || fixInstruction.contains("ror")
-                || fixInstruction.contains("bic") || fixInstruction.contains("mvn") || fixInstruction.contains("rrx") || fixInstruction.contains("cmp")
-                || fixInstruction.contains("cmn")) {
+        if (this.reserveInstructions.isDataProcessingInstructions(fixInstruction)) {
             this.dataProcessingDecodeInstruction(fixInstruction);
-        }
-        else if (fixInstruction.contains("mul") || fixInstruction.contains("mla")) {
+        } else if (this.reserveInstructions.isMultiplyInstructions(fixInstruction)) {
             this.multiplyDecodeInstruction(fixInstruction);
 
-        }
-
-        else if (fixInstruction.contains("str") || fixInstruction.contains("ldr") || fixInstruction.contains("strb") || fixInstruction.contains("ldrb")) {
+        } else if (this.reserveInstructions.isMemoryInstructions(fixInstruction)) {
             this.memoryDecodeInstruction(fixInstruction);
 
+        } else if (this.reserveInstructions.isBranchInstructions(fixInstruction)) {
+            this.BranchDecodeInstruction(fixInstruction);
+
+        } else if (this.hashLabel.findLabel(fixInstruction) == -1) {
+            System.out.println("Instruccion no reconocida: " + instruction);
+            OutputText.setText(OutputText.getText()+"Instrucción no reconocida: " + instruction +", línea: "+ this.pcCounter +"\r\n");
         }
-        else
-        {
-            if(!instruction.contains(" ")){
-                this.hashLabel.addLabel(instruction.toLowerCase().trim(), pcCounter);
-               
-            }
-            else{
-                System.out.println("Instruccion no reconocida: "+instruction);
-            }
-            
-        }
-         
-        this.pcCounter+=1;
+
+        this.mov("r15", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
+        this.pcCounter += 1;
     }
 
-    public int countComma(String decodeInstruction) {
-        int countComma = 0;
-        for (int i = 0; i < decodeInstruction.length(); i++) {
-            if (decodeInstruction.charAt(i) == ',') {
-                countComma += 1;
+    public void dataProcessingDecodeInstruction(String instruction) {
+
+        String decodeInstruction = instruction.replace(" ", "").substring(3).trim();
+        //System.out.println(decodeInstruction);
+        String rd = decodeInstruction.substring(0, decodeInstruction.indexOf(','));
+        //System.out.println(rd);
+        String src2 = decodeInstruction.substring(decodeInstruction.lastIndexOf(',') + 1);
+        //System.out.println(src2);
+        //Long rdValue = getRegisterValue(rd);
+        Long src2Value;
+
+        //inmediato
+        if (src2.contains("#")) {
+            if (src2.contains("x")) {
+                src2Value = castHexRegStringToLong(src2);
+            } else {
+                src2Value = castDecRegStringToLong(src2);
             }
+        } //registro
+        else {
+            src2Value = getRegisterValue(src2);
         }
-        return countComma;
+
+        //instructions 
+        if (instruction.contains("cmp ") || instruction.contains("cmn ") || instruction.contains("mov ") || instruction.contains("mvn ")) {
+            if (instruction.contains("mov ")) {
+                this.mov(rd, src2Value);
+            }
+            if (instruction.contains("mvn ")) {
+                this.mvn(rd, src2Value);
+            }
+            if (instruction.contains("cmn ")) {
+                Long rdValue = getRegisterValue(rd);
+                this.cmn(rdValue, src2Value);
+            }
+            if (instruction.contains("cmp ")) {
+                Long rdValue = getRegisterValue(rd);
+                this.cmp(rdValue, src2);
+            }
+        } else {
+            String rn = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
+            Long rnValue = getRegisterValue(rn);
+
+            if (instruction.contains("add ")) {
+                this.add(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("sub ")) {
+                this.sub(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("rsb ")) {
+                this.sub(rd, src2Value, rnValue);
+            }
+            if (instruction.contains("eor ")) {
+                this.eor(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("and ")) {
+                this.and(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("sbc ")) {
+                this.sbc(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("rsc ")) {
+                this.sbc(rd, src2Value, rnValue);
+            }
+            if (instruction.contains("orr ")) {
+                this.orr(rd, src2Value, rnValue);
+            }
+            if (instruction.contains("lsl ")) {
+                this.lsl(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("asr ")) {
+                this.asr(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("ror ")) {
+                this.ror(rd, rnValue, src2Value);
+            }
+            if (instruction.contains("bic ")) {
+                this.bic(rd, rnValue, src2Value);
+            }
+
+        }
+
+    }
+
+    public void multiplyDecodeInstruction(String instruction) {
+        String decodeInstruction = instruction.replace(" ", "").substring(3).trim();
+        String rd = decodeInstruction.substring(0, decodeInstruction.indexOf(','));
+
+        //instructions 
+        if (instruction.contains("mul")) {
+            String rn = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
+            String rm = decodeInstruction.substring(decodeInstruction.lastIndexOf(',') + 1);
+            Long rmValue = getRegisterValue(rm);
+            Long rnValue = getRegisterValue(rn);
+            this.mul(rd, rnValue, rmValue);
+        } else {
+            String middle = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
+            String rn = middle.substring(0, middle.indexOf(','));
+            String rm = middle.substring(middle.lastIndexOf(',') + 1);
+            String ra = decodeInstruction.substring(decodeInstruction.lastIndexOf(',') + 1);
+            Long rmValue = getRegisterValue(rm);
+            Long rnValue = getRegisterValue(rn);
+            Long raValue = getRegisterValue(ra);
+            this.mla(rd, rnValue, rmValue, raValue);
+
+        }
+
     }
 
     public void memoryDecodeInstruction(String instruction) {
-        String decodeInstruction = "";
-        if (instruction.contains("strb") || instruction.contains("ldrb")) {
+
+        String decodeInstruction;
+        if (instruction.contains("strb ") || instruction.contains("ldrb ")) {
             decodeInstruction = instruction.replace(" ", "").substring(4).trim();
         } else {
             decodeInstruction = instruction.replace(" ", "").substring(3).trim();
@@ -121,202 +213,242 @@ public class Operation {
             String rn = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
             //System.out.println("rn: " + rn);
             rnValue = getRegisterValue(rn);
-            if (instruction.contains("strb")) {
-                 rdValue= getRegisterValue(rd);
-                 this.strb(rdValue, rnValue, src2Value);    
+            if (instruction.contains("strb ")) {
+                rdValue = getRegisterValue(rd);
+                this.strb(rdValue, rnValue, src2Value);
 
-            } else if (instruction.contains("ldrb")) {
-                 this.ldrb(rd, rnValue, src2Value);
+            } else if (instruction.contains("ldrb ")) {
+                this.ldrb(rd, rnValue, src2Value);
+
+            } else if (instruction.contains("str ")) {
+                rdValue = getRegisterValue(rd);
+                this.str(rdValue, rnValue, src2Value);
+            } else {
+                this.ldr(rd, rnValue, src2Value);
+            }
+        } else if (instruction.contains("strb ")) {
+            rdValue = getRegisterValue(rd);
+            this.strb(rdValue, 0L, src2Value);
+
+        } else if (instruction.contains("ldrb ")) {
+            this.ldrb(rd, 0L, src2Value);
+
+        } else if (instruction.contains("str ")) {
+            rdValue = getRegisterValue(rd);
+            this.str(rdValue, 0L, src2Value);
+        } else {
+            this.ldr(rd, 0L, src2Value);
+        }
+
+    }
+
+    private void BranchDecodeInstruction(String fixInstruction) {
+        if (fixInstruction.contains("b ") || fixInstruction.contains("bl ")) {
+            boolean link = fixInstruction.contains("bl ");
+            String label = fixInstruction.substring(2).replace(" ", "").trim();
+            this.b(label, link);
+        }
+
+        if (fixInstruction.contains("bge ") || fixInstruction.contains("blge ")) {
+            boolean link = fixInstruction.contains("blge ");
+            String label = fixInstruction.substring(4).replace(" ", "").trim();
+            this.bge(label, link);
+        }
+        if (fixInstruction.contains("ble ") || fixInstruction.contains("blle ")) {
+            boolean link = fixInstruction.contains("blle ");
+            String label = fixInstruction.substring(4).replace(" ", "").trim();
+            this.ble(label, link);
+        }
+        if (fixInstruction.contains("blt ") || fixInstruction.contains("bllt ")) {
+            boolean link = fixInstruction.contains("bllt ");
+            String label = fixInstruction.substring(4).replace(" ", "").trim();
+            this.blt(label, link);
+        }
+        if (fixInstruction.contains("bgt ") || fixInstruction.contains("blgt ")) {
+            boolean link = fixInstruction.contains("blgt ");
+            String label = fixInstruction.substring(4).replace(" ", "").trim();
+            this.bgt(label, link);
+        }
+        if (fixInstruction.contains("beq ") || fixInstruction.contains("bleq ")) {
+            boolean link = fixInstruction.contains("bleq ");
+            String label = fixInstruction.substring(4).replace(" ", "").trim();
+            this.beq(label, link);
+        }
+        if (fixInstruction.contains("bne ") || fixInstruction.contains("blne ")) {
+            boolean link = fixInstruction.contains("blne ");
+            String label = fixInstruction.substring(4).replace(" ", "").trim();
+            this.bne(label, link);
+        }
+    }
+
+    public void b(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public void bge(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1 && (this.conditionFlag.isZero() || !this.conditionFlag.isNegative())) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public void ble(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1 && (this.conditionFlag.isZero() || this.conditionFlag.isNegative())) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public void blt(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1 && (this.conditionFlag.isNegative())) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public void bgt(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1 && (!this.conditionFlag.isNegative() && !this.conditionFlag.isZero())) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public void beq(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1 && (this.conditionFlag.isZero())) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public void bne(String label, boolean link) {
+        int position = this.hashLabel.findLabel(label);
+        if (position != -1 && (!this.conditionFlag.isZero())) {
+            if (link) {
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+            }
+            this.pcCounter = position;
+        }
+
+    }
+
+    public int countComma(String decodeInstruction) {
+        int countComma = 0;
+        for (int i = 0; i < decodeInstruction.length(); i++) {
+            if (decodeInstruction.charAt(i) == ',') {
+                countComma += 1;
+            }
+        }
+        return countComma;
+    }
+
+    public void ldr(String rd, Long rn, Long src2) {
+        Long memorySlot = rn + src2;
+        if (memorySlot < 1024) {
+            if (memorySlot % 4 == 0) {
+
+                this.mov(rd, Long.parseLong(this.memory.loadWord(memorySlot.intValue()), 16));
 
             } else {
-                 if (instruction.contains("str")) {
-                     rdValue= getRegisterValue(rd);
-                     this.str(rdValue, rnValue, src2Value);                 
-                 }
-                 else 
-                 {
-                      this.ldr(rd, rnValue, src2Value);
-                 }
+                OutputText.setText(OutputText.getText()+"Memoria desalineada, se intentó hacer un ldr del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+                //System.out.println("Memoria desalineada ldr dirección: " + memorySlot);
             }
         } else {
-            if (instruction.contains("strb")) {
-                 rdValue= getRegisterValue(rd);
-                 this.strb(rdValue, 0L, src2Value);    
+            OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un ldr del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            //System.out.println("Posición no existente en la memoria");
+        }
 
-            } else if (instruction.contains("ldrb")) {
-                 this.ldrb(rd, 0L , src2Value);
+    }
 
-            } else {
-                 if (instruction.contains("str")) {
-                     rdValue= getRegisterValue(rd);
-                     this.str(rdValue, 0L , src2Value);                 
-                 }
-                 else 
-                 {
-                      this.ldr(rd, 0L , src2Value);
-                 }
-            }
+    public void ldrb(String rd, Long rn, Long src2) {
+        Long memorySlot = rn + src2;
+        if (memorySlot < 1024) {
+            //System.out.println("Slot: " + Long.parseLong(this.memory.loadByte(memorySlot.intValue()), 16));
+            this.mov(rd, Long.parseLong(this.memory.loadByte(memorySlot.intValue()), 16));
+
+        } else {
+             OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un ldrb del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            //System.out.println("Posición no existente en la memoria");
 
         }
 
     }
 
-    public void ldr(String rd, Long rn, Long src2) {       
+    public void str(Long rd, Long rn, Long src2) {
         Long memorySlot = rn + src2;
-        if (memorySlot % 4 == 0) {
-            
-            this.mov(rd, Long.parseLong(this.memory.loadWord(memorySlot.intValue()),16));
+        if (memorySlot < 1024) {
+            if (memorySlot % 4 == 0) {
+                String hexRd = Long.toHexString(rd);
+                int length = hexRd.length();
+                if (length < 8) {
+                    String aux = "";
+                    for (int i = 0; i < 8 - length; i++) {
+                        aux = aux + "0";
+                    }
+                    hexRd = aux + hexRd;
+                }
+                if (length > 8) {
+                    hexRd = hexRd.substring(length - 8);
+                }
+                this.memory.storeWord(memorySlot.intValue(), hexRd);
 
+            } else {
+                OutputText.setText(OutputText.getText()+"Memoria desalineada, se intentó hacer un str del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+                //System.out.println("Memoria desalineada str dirección: " + memorySlot);
+            }
         } else {
-            System.out.println("Memoria desalineada ldr dirección: " + memorySlot);
+            OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un str del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            //System.out.println("Posición no existente en la memoria");
         }
-    }
-    
-    public void ldrb(String rd, Long rn, Long src2) {       
-        Long memorySlot = rn + src2;
-        this.mov(rd, Long.parseLong(this.memory.loadByte(memorySlot.intValue()),16));
 
-       
     }
-    
-    public void str(Long rd, Long rn, Long src2) {       
+
+    public void strb(Long rd, Long rn, Long src2) {
         Long memorySlot = rn + src2;
-        if (memorySlot % 4 == 0) {
-            String hexRd = Long.toHexString(rd);           
+        if (memorySlot < 1024) {
+            String hexRd = Long.toHexString(rd);
             int length = hexRd.length();
-            if (length < 8) {
+            if (length < 2) {
                 String aux = "";
-                for (int i = 0; i < 8 - length; i++) {
+                for (int i = 0; i < 2 - length; i++) {
                     aux = aux + "0";
                 }
                 hexRd = aux + hexRd;
-            }           
-            if (length > 8) {
-                hexRd = hexRd.substring(length - 8);
             }
-            this.memory.storeWord(memorySlot.intValue(), hexRd);
-
-        } else {
-            System.out.println("Memoria desalineada str dirección: " + memorySlot);
-        }
-    }
-    
-    public void strb(Long rd, Long rn, Long src2) {       
-        Long memorySlot = rn + src2;
-        String hexRd = Long.toHexString(rd); 
-        int length = hexRd.length();
-        if (length < 2) {
-            String aux = "";
-            for (int i = 0; i < 2 - length; i++) {
-                aux = aux + "0";
-            }
-            hexRd = aux + hexRd;
-            }           
             if (length > 2) {
                 hexRd = hexRd.substring(length - 2);
             }
-            this.memory.storeByte(memorySlot.intValue(), hexRd);       
-    }
-    
-
-    public void dataProcessingDecodeInstruction(String instruction) {
-        String decodeInstruction = instruction.replace(" ", "").substring(3).trim();
-        //System.out.println(decodeInstruction);
-        String rd = decodeInstruction.substring(0, decodeInstruction.indexOf(','));
-        //System.out.println(rd);
-        String src2 = decodeInstruction.substring(decodeInstruction.lastIndexOf(',') + 1);
-        //System.out.println(src2);
-        //Long rdValue = getRegisterValue(rd);
-        Long src2Value;
-
-        //inmediato
-        if (src2.contains("#")) {
-            if (src2.contains("x")) {
-                src2Value = castHexRegStringToLong(src2);
-            } else {
-                src2Value = castDecRegStringToLong(src2);
-            }
-        } //registro
-        else {
-            src2Value = getRegisterValue(src2);
-        }
-
-        //instructions 
-        if (instruction.contains("cmp") || instruction.contains("cmn") || instruction.contains("mov") || instruction.contains("mvn")) {
-            if (instruction.contains("mov")) {
-                this.mov(rd, src2Value);
-            }
-            if (instruction.contains("mvn")) {
-                this.mvn(rd, src2Value);
-            }
+            this.memory.storeByte(memorySlot.intValue(), hexRd);
         } else {
-            String rn = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
-            Long rnValue = getRegisterValue(rn);
-
-            if (instruction.contains("add")) {
-                this.add(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("sub")) {
-                this.sub(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("rsb")) {
-                this.sub(rd, src2Value, rnValue);
-            }
-            if (instruction.contains("eor")) {
-                this.eor(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("and")) {
-                this.and(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("sbc")) {
-                this.sbc(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("rsc")) {
-                this.sbc(rd, src2Value, rnValue);
-            }
-            if (instruction.contains("orr")) {
-                this.orr(rd, src2Value, rnValue);
-            }
-            if (instruction.contains("lsl")) {
-                this.lsl(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("asr")) {
-                this.asr(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("ror")) {
-                this.ror(rd, rnValue, src2Value);
-            }
-            if (instruction.contains("bic")) {
-                this.bic(rd, rnValue, src2Value);
-            }
-
+            OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un strb del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            //System.out.println("Posición no existente en la memoria");
         }
-
-    }
-
-    public void multiplyDecodeInstruction(String instruction) {
-        String decodeInstruction = instruction.replace(" ", "").substring(3).trim();
-        String rd = decodeInstruction.substring(0, decodeInstruction.indexOf(','));
-
-        //instructions 
-        if (instruction.contains("mul")) {
-            String rn = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
-            String rm = decodeInstruction.substring(decodeInstruction.lastIndexOf(',') + 1);
-            Long rmValue = getRegisterValue(rm);
-            Long rnValue = getRegisterValue(rn);
-            this.mul(rd, rnValue, rmValue);
-        } else {
-            String middle = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
-            String rn = middle.substring(0, middle.indexOf(','));
-            String rm = middle.substring(middle.lastIndexOf(',') + 1);
-            String ra = decodeInstruction.substring(decodeInstruction.lastIndexOf(',') + 1);
-            Long rmValue = getRegisterValue(rm);
-            Long rnValue = getRegisterValue(rn);
-            Long raValue = getRegisterValue(ra);
-            this.mla(rd, rnValue, rmValue, raValue);
-
-        }
-
     }
 
     public Long getRegisterValue(String reg) {
@@ -325,7 +457,8 @@ public class Operation {
         if (!"".equals(regValue)) {
             return castHexRegStringToLong(regValue);
         } else {
-            System.out.println("Error se intentó acceder a un registro que no tenía nada escrito: " + reg);
+            OutputText.setText(OutputText.getText()+"Se intentó acceder a un registro que no tenía nada escrito: " +reg+", en la línea: "+ this.pcCounter +"\r\n");
+            //System.out.println("Error se intentó acceder a un registro que no tenía nada escrito: " + reg);
             return null;
         }
 
@@ -360,9 +493,9 @@ public class Operation {
     }
 
     public void add(String rd, Long rn, Long src2) {
-
+        // System.out.println("rn: "+Long.toBinaryString(rn)+" , src2: "+Long.toBinaryString(src2));
         Long result = rn + src2;
-
+        //  System.out.println("reuslt: "+Long.toBinaryString(result) +", cantidad: "+Long.toBinaryString(result).length());
         this.mov(rd, result);
     }
 
@@ -384,7 +517,7 @@ public class Operation {
     public void asr(String rd, Long rn, Long src2) {
 
         Long result = Long.parseLong(Long.toBinaryString(rn >>= src2), 2);
-        System.out.println(Long.toHexString(result));
+        //System.out.println(Long.toHexString(result));
         this.mov(rd, result);
     }
 
@@ -404,7 +537,9 @@ public class Operation {
     }
 
     public void sub(String rd, Long rn, Long src2) {
-        Long result = rn - src2;
+        //System.out.println("rn: "+Long.toBinaryString(rn)+" , src2: "+Long.toBinaryString(src2));
+        Long result = rn + (-src2);
+        // System.out.println("reuslt: "+Long.toBinaryString(result) +", cantidad: "+Long.toBinaryString(result).length());
         this.mov(rd, result);
     }
 
@@ -444,49 +579,170 @@ public class Operation {
         bankRegister.setRegister(rd, "0x" + hexSrc2);
     }
 
-    public void cmp(Long rn, Long src2) {
-        Long result = rn - src2;
-        //Negative
-        if (result < 0) {
-            this.conditionFlag.setNegative(true);
-        } else {
-            this.conditionFlag.setNegative(false);
+    public boolean verifyNegative(int length, String binaryResult) {
+
+        boolean result = false;
+        if (length == 32) {
+            if (binaryResult.charAt(0) == '1') {
+                result = true;
+            }
         }
-        //Zero                
-        if (result == 0) {
-            this.conditionFlag.setZero(true);
-        } else {
-            this.conditionFlag.setZero(false);
+
+        if (length >= 32) {
+            binaryResult = binaryResult.substring(binaryResult.length() - 32);
+            if (binaryResult.charAt(0) == '1') {
+                result = true;
+            }
         }
+
+        return result;
+    }
+
+    public boolean verifyZero(int length, String binaryResult) {
+        boolean result = false;
+        if (length > 32) {
+            String binaryResultAux = binaryResult.substring(binaryResult.length() - 32);
+            if (Long.parseLong(binaryResultAux, 2) == 0) {
+                result = true;
+            }
+
+        } else if (Long.parseLong(binaryResult, 2) == 0) {
+            result = true;
+        }
+        return result;
+    }
+
+    public boolean verifyCarry(int length) {
+        boolean result = false;
+        if (length > 32) {
+            result = true;
+        }
+        return result;
+    }
+
+    public boolean verifyOverflow(String binaryRn, String binarySrc2, String binaryResult, int lenght, String op) {
+        boolean result = false;
+        if (binaryRn.length() > 32) {
+            binaryRn = binaryRn.substring(binaryRn.length() - 32);
+
+        }
+        if (binaryRn.length() < 32) {
+            String aux = "";
+            for (int i = 0; i < 32 - binaryRn.length(); i++) {
+                aux = aux + "0";
+            }
+            binaryRn = aux + binaryRn;
+
+        }
+        if (binarySrc2.length() > 32) {
+            binarySrc2 = binarySrc2.substring(binarySrc2.length() - 32);
+
+        }
+        if (binarySrc2.length() < 32) {
+            String aux = "";
+            for (int i = 0; i < 32 - binarySrc2.length(); i++) {
+                aux = aux + "0";
+            }
+            binarySrc2 = aux + binarySrc2;
+        }
+
+        if (lenght > 32) {
+            binaryResult = binaryResult.substring(lenght - 32);
+
+        }
+        if (lenght < 32) {
+            String aux = "";
+            for (int i = 0; i < 32 - lenght; i++) {
+                aux = aux + "0";
+            }
+            binaryResult = aux + binaryResult;
+        }
+
+        if (binaryRn.charAt(0) != binaryResult.charAt(0)) {
+            if (op == "add") {
+                if (binaryRn.charAt(0) == binarySrc2.charAt(0)) {
+                    result = true;
+                }
+            }
+            if (op == "sub") {
+                if (binaryRn.charAt(0) != binarySrc2.charAt(0)) {
+                    result = true;
+                }
+
+            }
+        }
+        return result;
     }
 
     public void cmn(Long rn, Long src2) {
         Long result = rn + src2;
+        String binaryResult = Long.toBinaryString(result);
+        String binaryRn = Long.toBinaryString(rn);
+        String binarySrc2 = Long.toBinaryString(src2);
+        int lenghtResult = binaryResult.length();
         //Negative
-        if (result < 0) {
-            this.conditionFlag.setNegative(true);
-        } else {
-            this.conditionFlag.setNegative(false);
-        }
-        //Zero                
-        if (result == 0) {
-            this.conditionFlag.setZero(true);
-        } else {
-            this.conditionFlag.setZero(false);
-        }
+        this.conditionFlag.setNegative(this.verifyNegative(lenghtResult, binaryResult));
+        //Zero   
+        this.conditionFlag.setZero(this.verifyZero(lenghtResult, binaryResult));
         //Carry
-        if (result > 4294967295L) {
-            this.conditionFlag.setCarry(true);
-        } else {
-            this.conditionFlag.setCarry(true);
+        this.conditionFlag.setCarry(this.verifyCarry(lenghtResult));
+        //overflow 
+        this.conditionFlag.setoVerflow(this.verifyOverflow(binaryRn, binarySrc2, binaryResult, lenghtResult, "add"));
+
+    }
+
+    public String addNegative(String src2) {
+        String aux = "FFFFFFFF";
+        Long auxValue = Long.parseLong(aux, 16);
+        Long src2Value = Long.parseLong(src2, 16);
+        String result = Long.toString(auxValue - src2Value + 1, 16);
+        if (result.length() > 8) {
+            result = result.substring(result.length() - 8);
+
+        }
+        return result;
+
+    }
+
+    public void cmp(Long rn, String src2) {
+        Long src2Value;
+        if (src2.contains("#")) {
+            if (src2.contains("x")) {
+
+                src2 = src2.substring(src2.indexOf('x') + 1);
+                src2 = addNegative(src2);
+                src2Value = Long.parseLong(src2, 16);
+
+            } else {
+                src2 = "-" + src2.substring(src2.indexOf('#') + 1);
+                src2Value = Long.valueOf(src2);
+            }
+        } //registro
+        else {
+            src2 = bankRegister.findRegister(src2);
+            src2 = src2.substring(src2.indexOf('x') + 1);
+
+            src2 = addNegative(src2);
+
+            src2Value = Long.parseLong(src2, 16);
         }
 
+        Long result = rn + src2Value;
+
+        String binaryResult = Long.toBinaryString(result);
+        String binaryRn = Long.toBinaryString(rn);
+        String binarySrc2 = Long.toBinaryString(src2Value);
+
+        //  System.out.println("rn: "+binaryRn+", src: "+binarySrc2+" ,result: "+binaryResult);
+        int lenghtResult = binaryResult.length();
+        //Negative
+        this.conditionFlag.setNegative(this.verifyNegative(lenghtResult, binaryResult));
+        //Zero   
+        this.conditionFlag.setZero(this.verifyZero(lenghtResult, binaryResult));
+        //Carry
+        this.conditionFlag.setCarry(this.verifyCarry(lenghtResult));
         //overflow 
-        if (result > Integer.MAX_VALUE) {
-            this.conditionFlag.setoVerflow(true);
-        } else {
-            this.conditionFlag.setoVerflow(true);
-        }
+        this.conditionFlag.setoVerflow(this.verifyOverflow(binaryRn, binarySrc2, binaryResult, lenghtResult, "sub"));
     }
 
 }

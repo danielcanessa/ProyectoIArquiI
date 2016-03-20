@@ -1,0 +1,2 @@
+this.OutputText.getText().length()
+mov r0,#19
