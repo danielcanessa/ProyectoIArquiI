@@ -1,5 +1,1 @@
-bl daniel
-mov r0,#1
-daniel
-mov r0,lr
-mov r5,#4
+MOV R0,#1

@@ -31,6 +31,7 @@ public class MainFrame extends javax.swing.JFrame {
     private ConditionFlags conditionFlag;
     private HashLabel hashLabel;
     private ReserveInstructions reserveInstructions;
+    private CodeGeneration codeGenerator;
 
     public MainFrame() {
         initComponents();
@@ -45,6 +46,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.hashLabel = new HashLabel(reserveInstructions);
         this.conditionFlag = new ConditionFlags();
         this.fillConditionalFlags();
+        this.codeGenerator = new CodeGeneration();
     }
 
     public void fillConditionalFlags() {
@@ -109,6 +111,23 @@ public class MainFrame extends javax.swing.JFrame {
 
         this.memoryTable.setModel(this.modelMemory);
 
+    }
+    
+    //This method is called to print the errors in the simulator
+    public void showErrors(){
+        if(CodeGeneration.lexicalError == 0 && CodeGeneration.syntacticError == 0
+                && CodeGeneration.semanticError == 0){
+            this.OutputText.append("The code generation has been successful."+"\n");
+            
+        }
+        else{
+            int large = CodeGeneration.errorList.size();
+            for (int i = 0; i < large; i++) {
+                String findError = CodeGeneration.errorList.get(i);
+                this.OutputText.append(findError);
+            }
+            
+        }        
     }
 
     /**
@@ -176,7 +195,6 @@ public class MainFrame extends javax.swing.JFrame {
         ));
         memoryTable.setFillsViewportHeight(true);
         memoryTable.setFocusable(false);
-        memoryTable.setGridColor(java.awt.SystemColor.controlShadow);
         memoryTable.setRowHeight(24);
         memoryTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         memoryTable.setShowHorizontalLines(false);
@@ -201,7 +219,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         registerTable.setFillsViewportHeight(true);
         registerTable.setFocusable(false);
-        registerTable.setGridColor(java.awt.SystemColor.controlShadow);
         registerTable.setRowHeight(24);
         registerTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         jScrollPane2.setViewportView(registerTable);
@@ -593,12 +610,10 @@ public class MainFrame extends javax.swing.JFrame {
         
         //Aqui va su código//
         //Para escribir en la "consola" de la aplicacion pone: this.OutputText.append("texto que quiere que se escriba"+"\n");
-        
-        
-        
-        
-        
-        if (this.OutputText.getText().length() < 11) {
+        try {
+            codeGenerator.generateCode();
+            showErrors();
+            if (this.OutputText.getText().length() < 11) {
             for (int i = 0; i < lines.length; i++) {
                 this.hashLabel.fillHashTable(lines[i], i);
             }
@@ -610,9 +625,11 @@ public class MainFrame extends javax.swing.JFrame {
                 this.fillMemoryTable();
                 this.fillRegisterTable();
             }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
+        
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
