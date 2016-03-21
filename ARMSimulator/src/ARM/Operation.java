@@ -32,20 +32,21 @@ public class Operation {
         this.pcCounter = 0;
         this.hashLabel = hashLabel;
         this.reserveInstructions = reserveInstructions;
-        this.OutputText=OutputText;
+        this.OutputText = OutputText;
 
     }
 
-   
     public int getPCCounter() {
         return this.pcCounter;
     }
 
     public void selectOperation(String instruction) {
         //OutputText.setText(OutputText.getText()+"Instrucción ejecutada: "+instruction+"\r\n");
-     
+
         // System.out.println(instruction);
-      
+        this.mov("r15", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
+        this.pcCounter += 1;
+
         String fixInstruction = instruction.toLowerCase().trim();
         if (this.reserveInstructions.isDataProcessingInstructions(fixInstruction)) {
             this.dataProcessingDecodeInstruction(fixInstruction);
@@ -60,11 +61,9 @@ public class Operation {
 
         } else if (this.hashLabel.findLabel(fixInstruction) == -1) {
             System.out.println("Instruccion no reconocida: " + instruction);
-            OutputText.setText(OutputText.getText()+"Instrucción no reconocida: " + instruction +", línea: "+ this.pcCounter +"\r\n");
+            OutputText.setText(OutputText.getText() + "Instrucción no reconocida: " + instruction + ", línea: " + this.pcCounter + "\r\n");
         }
 
-        this.mov("r15", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
-        this.pcCounter += 1;
     }
 
     public void dataProcessingDecodeInstruction(String instruction) {
@@ -205,7 +204,11 @@ public class Operation {
                 src2Value = castDecRegStringToLong(src2);
             }
         } //registro
-        else {
+        else if (src2.contains("-")) {
+            src2Value = getRegisterValue(src2.substring(src2.indexOf("-") + 1));
+            src2Value = src2Value * -1;
+
+        } else {
             src2Value = getRegisterValue(src2);
         }
 
@@ -285,7 +288,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -296,7 +299,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1 && (this.conditionFlag.isZero() || !this.conditionFlag.isNegative())) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -307,7 +310,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1 && (this.conditionFlag.isZero() || this.conditionFlag.isNegative())) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -318,7 +321,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1 && (this.conditionFlag.isNegative())) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -329,7 +332,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1 && (!this.conditionFlag.isNegative() && !this.conditionFlag.isZero())) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -340,7 +343,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1 && (this.conditionFlag.isZero())) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -351,7 +354,7 @@ public class Operation {
         int position = this.hashLabel.findLabel(label);
         if (position != -1 && (!this.conditionFlag.isZero())) {
             if (link) {
-                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
+                this.mov("r14", Long.parseLong(Integer.toString((this.pcCounter) * 4)));
             }
             this.pcCounter = position;
         }
@@ -370,17 +373,23 @@ public class Operation {
 
     public void ldr(String rd, Long rn, Long src2) {
         Long memorySlot = rn + src2;
-        if (memorySlot < 1024) {
+        if (memorySlot > 1023 && memorySlot < 2048) {
             if (memorySlot % 4 == 0) {
-
-                this.mov(rd, Long.parseLong(this.memory.loadWord(memorySlot.intValue()), 16));
+                String word = this.memory.loadWord(memorySlot.intValue());
+                if ("".equals(word)) {
+                    word = "00000000";
+                }
+                this.mov(rd, Long.parseLong(word, 16));
 
             } else {
-                OutputText.setText(OutputText.getText()+"Memoria desalineada, se intentó hacer un ldr del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+                OutputText.setText(OutputText.getText() + "Memoria desalineada, se intentó hacer un ldr del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
                 //System.out.println("Memoria desalineada ldr dirección: " + memorySlot);
             }
+        } else if (memorySlot >= 0 & memorySlot < 1024) {
+            OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un ldr del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
+            //System.out.println("Posición no existente en la memoria");
         } else {
-            OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un ldr del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un ldr del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
 
@@ -388,21 +397,28 @@ public class Operation {
 
     public void ldrb(String rd, Long rn, Long src2) {
         Long memorySlot = rn + src2;
-        if (memorySlot < 1024) {
+        if (memorySlot > 1023 && memorySlot < 2048) {
             //System.out.println("Slot: " + Long.parseLong(this.memory.loadByte(memorySlot.intValue()), 16));
-            this.mov(rd, Long.parseLong(this.memory.loadByte(memorySlot.intValue()), 16));
+            String resultByte = this.memory.loadByte(memorySlot.intValue());
+            if ("".equals(resultByte)) {
+                resultByte = "00";
 
-        } else {
-             OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un ldrb del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            }
+            this.mov(rd, Long.parseLong(resultByte, 16));
+
+        } else if (memorySlot >= 0 & memorySlot < 1024) {
+            OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un ldrb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
-
+        } else {
+            OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un ldrb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
+            //System.out.println("Posición no existente en la memoria");
         }
 
     }
 
     public void str(Long rd, Long rn, Long src2) {
         Long memorySlot = rn + src2;
-        if (memorySlot < 1024) {
+        if (memorySlot > 1023 && memorySlot < 2048) {
             if (memorySlot % 4 == 0) {
                 String hexRd = Long.toHexString(rd);
                 int length = hexRd.length();
@@ -419,11 +435,14 @@ public class Operation {
                 this.memory.storeWord(memorySlot.intValue(), hexRd);
 
             } else {
-                OutputText.setText(OutputText.getText()+"Memoria desalineada, se intentó hacer un str del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+                OutputText.setText(OutputText.getText() + "Memoria desalineada, se intentó hacer un str del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
                 //System.out.println("Memoria desalineada str dirección: " + memorySlot);
             }
+        } else if (memorySlot >= 0 & memorySlot < 1024) {
+            OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un str del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
+            //System.out.println("Posición no existente en la memoria");
         } else {
-            OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un str del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un str del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
 
@@ -431,7 +450,7 @@ public class Operation {
 
     public void strb(Long rd, Long rn, Long src2) {
         Long memorySlot = rn + src2;
-        if (memorySlot < 1024) {
+        if (memorySlot > 1023 && memorySlot < 2048) {
             String hexRd = Long.toHexString(rd);
             int length = hexRd.length();
             if (length < 2) {
@@ -445,19 +464,28 @@ public class Operation {
                 hexRd = hexRd.substring(length - 2);
             }
             this.memory.storeByte(memorySlot.intValue(), hexRd);
+        } else if (memorySlot >= 0 & memorySlot < 1024) {
+            OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un strb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
+            //System.out.println("Posición no existente en la memoria");
         } else {
-            OutputText.setText(OutputText.getText()+"Posición de memoria no existente, se intentó hacer un strb del slot de memoria: "+memorySlot+", en la línea: "+ this.pcCounter +"\r\n");
+            OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un strb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
     }
 
     public Long getRegisterValue(String reg) {
+        if ("pc".equals(reg)) {
+            reg = "r15";
+        }
+        if ("lr".equals(reg)) {
+            reg = "r14";
+        }
         String regValue = bankRegister.findRegister(reg);
 
         if (!"".equals(regValue)) {
             return castHexRegStringToLong(regValue);
         } else {
-            OutputText.setText(OutputText.getText()+"Se intentó acceder a un registro que no tenía nada escrito: " +reg+", en la línea: "+ this.pcCounter +"\r\n");
+            OutputText.setText(OutputText.getText() + "Se intentó acceder a un registro de una manera no soportada por la instrucción: " + reg + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Error se intentó acceder a un registro que no tenía nada escrito: " + reg);
             return null;
         }

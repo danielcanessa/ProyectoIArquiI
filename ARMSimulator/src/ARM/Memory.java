@@ -18,7 +18,7 @@ public class Memory {
     public Memory ()
     {
         this.memory = new ArrayList<>();
-        for (int i = 0; i < 1024; i++) {
+        for (int i = 0; i < 2048; i++) {
             memory.add("");            
         }        
     }

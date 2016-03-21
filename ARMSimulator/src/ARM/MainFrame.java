@@ -88,7 +88,7 @@ public class MainFrame extends javax.swing.JFrame {
         String[] columnNames = {"Position", "Data"};
 
         if (this.byteIsSelected) {
-            Object[][] data = new Object[1024][2];
+            Object[][] data = new Object[2048][2];
             for (int i = 0; i < this.memory.getSize(); i++) {
 
                 data[i][0] = "0x" + this.memory.intToHex(i);
@@ -97,7 +97,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
             this.modelMemory = new EditableTableModel(data, columnNames);
         } else {
-            Object[][] data = new Object[256][2];
+            Object[][] data = new Object[512][2];
             for (int i = 0; i < this.memory.getSize(); i += 4) {
 
                 data[i / 4][0] = "0x" + this.memory.intToHex(i);
