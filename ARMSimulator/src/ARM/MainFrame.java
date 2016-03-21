@@ -112,22 +112,21 @@ public class MainFrame extends javax.swing.JFrame {
         this.memoryTable.setModel(this.modelMemory);
 
     }
-    
+
     //This method is called to print the errors in the simulator
-    public void showErrors(){
-        if(CodeGeneration.lexicalError == 0 && CodeGeneration.syntacticError == 0
-                && CodeGeneration.semanticError == 0){
-            this.OutputText.append("The code generation has been successful."+"\n");
-            
-        }
-        else{
+    public void showErrors() {
+        if (CodeGeneration.lexicalError == 0 && CodeGeneration.syntacticError == 0
+                && CodeGeneration.semanticError == 0) {
+            this.OutputText.append("The code generation has been successful." + "\n");
+
+        } else {
             int large = CodeGeneration.errorList.size();
             for (int i = 0; i < large; i++) {
                 String findError = CodeGeneration.errorList.get(i);
                 this.OutputText.append(findError);
             }
-            
-        }        
+
+        }
     }
 
     /**
@@ -593,7 +592,7 @@ public class MainFrame extends javax.swing.JFrame {
             line = line.replaceAll("\t", " ").replaceAll("^ +| +$|( )+", "$1").trim();
             if (line.length() > 0) {
                 this.codeText.append(line + "\n");
-                
+
             }
         }
 
@@ -604,32 +603,29 @@ public class MainFrame extends javax.swing.JFrame {
         WriteTxtFile file = new WriteTxtFile();
         file.writeFile(lines, "codeARMJTextPane.txt");
 
-        
-        
-        
-        
         //Aqui va su código//
         //Para escribir en la "consola" de la aplicacion pone: this.OutputText.append("texto que quiere que se escriba"+"\n");
         try {
             codeGenerator.generateCode();
             showErrors();
-            if (this.OutputText.getText().length() < 11) {
-            for (int i = 0; i < lines.length; i++) {
-                this.hashLabel.fillHashTable(lines[i], i);
-            }
-            Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel, this.reserveInstructions, this.OutputText);
-            for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
-                System.out.println("Line: " + lines[i]);
-                operation.selectOperation(lines[i]);
-                this.fillConditionalFlags();
-                this.fillMemoryTable();
-                this.fillRegisterTable();
-            }
+            //  System.out.println(this.OutputText.getText().length());
+            if (this.OutputText.getText().length() == 51 & this.OutputText.getText().contains("The code generation has been successful.")) {
+                for (int i = 0; i < lines.length; i++) {
+                    this.hashLabel.fillHashTable(lines[i], i);
+                }
+                Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel, this.reserveInstructions, this.OutputText);
+                for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
+                    System.out.println("Line: " + lines[i]);
+                    operation.selectOperation(lines[i]);
+                    this.fillConditionalFlags();
+                    this.fillMemoryTable();
+                    this.fillRegisterTable();
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
