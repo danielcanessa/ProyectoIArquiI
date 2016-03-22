@@ -24,6 +24,9 @@ public class CodeGeneration {
     //List that contains all of the labels and their directions
     static List<Label> labelList = new ArrayList<Label>();
     
+    //List that contains all of the labels and their directions
+    static List<String> instructionList = new ArrayList<String>();
+    
     //List that contains all of the errors of the program
     static List<String> errorList = new ArrayList<String>();
     
