@@ -36,7 +36,7 @@ parser code
 action code {:
 
 //Declare variable containing the start of the memory address for instructions
-   private static int instruction_direction = 0;
+   public static int instruction_direction = 0;
 
 //Write in the output file
 private static void writeOutputFile(String hexCode) throws IOException{

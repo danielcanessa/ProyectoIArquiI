@@ -1,6 +1,12 @@
 package ARM;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,16 +134,15 @@ public class MainFrame extends javax.swing.JFrame {
 
         }
     }
-    
+
     //Aqui se imprime la lista con las instrucciones
     public void imprimeInstrucciones() {
-        
-            int large = CodeGeneration.instructionList.size();
-            for (int i = 0; i < large; i++) {
-                System.out.println(CodeGeneration.instructionList.get(i));
-            }
 
-        
+        int large = CodeGeneration.instructionList.size();
+        for (int i = 0; i < large; i++) {
+            System.out.println(CodeGeneration.instructionList.get(i));
+        }
+
     }
 
     /**
@@ -205,6 +210,7 @@ public class MainFrame extends javax.swing.JFrame {
         ));
         memoryTable.setFillsViewportHeight(true);
         memoryTable.setFocusable(false);
+        memoryTable.setGridColor(java.awt.SystemColor.controlShadow);
         memoryTable.setRowHeight(24);
         memoryTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         memoryTable.setShowHorizontalLines(false);
@@ -229,6 +235,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         registerTable.setFillsViewportHeight(true);
         registerTable.setFocusable(false);
+        registerTable.setGridColor(java.awt.SystemColor.controlShadow);
         registerTable.setRowHeight(24);
         registerTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         jScrollPane2.setViewportView(registerTable);
@@ -509,6 +516,11 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(jSeparator1);
 
         jMenuItem1.setText("Generate Code");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Exit");
@@ -538,15 +550,21 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cleanMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanMemoryButtonActionPerformed
+        this.clean();
+
+    }//GEN-LAST:event_cleanMemoryButtonActionPerformed
+
+    public void clean() {
         this.memory.cleanMemory();
         this.register.cleanRegister();
         this.conditionFlag.cleanFlags();
+        this.OutputText.setText("Output: \r\n");
+        CodeGeneration.instructionList.clear();
         this.fillConditionalFlags();
         this.fillMemoryTable();
         this.fillRegisterTable();
 
-    }//GEN-LAST:event_cleanMemoryButtonActionPerformed
-
+    }
     private void saveMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMemoryButtonActionPerformed
         if (this.byteIsSelected) {
             for (int count = 0; count < modelMemory.getRowCount(); count++) {
@@ -588,15 +606,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.checkEdit.setSelected(false);
     }//GEN-LAST:event_radioButtonWordsItemStateChanged
 
-
-    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        //Se limpia todos los registros y cuadro de texto de output
-        this.register.cleanRegister();
-        this.conditionFlag.cleanFlags();
-        this.hashLabel.cleanHashLabel();
-        this.OutputText.setText("Output: \r\n");
-
-        //Se obtiene el código del cuadro del texto, se le quitan tabs, líneas en blanco, múltiples espacios
+    public void formatCode() {
         String[] original = this.codeText.getText().split("\\n");
         this.codeText.setText(null);
         for (String line : original) {
@@ -607,31 +617,70 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
 
-        //Contiene el texto corregido
-        String[] lines = this.codeText.getText().split("\\n");
+    }
 
-        //Se escribe el archivo de texto con el código
+    public void writeTXTCode(String[] lines) {
         WriteTxtFile file = new WriteTxtFile();
         file.writeFile(lines, "codeARMJTextPane.txt");
 
-        //Aqui va su código//
-        //Para escribir en la "consola" de la aplicacion pone: this.OutputText.append("texto que quiere que se escriba"+"\n");
+    }
+
+    public void fillMemoryProgram() {
+        int large = CodeGeneration.instructionList.size();
+
+        for (int i = 0; i < large; i++) {
+            String instruction = CodeGeneration.instructionList.get(i);
+            int lenght = instruction.length();
+            if (lenght < 8) {
+                String aux = "";
+                for (int j = 0; j < 8 - lenght; j++) {
+                    aux += "0";
+                }
+                instruction = aux + instruction;
+            }
+            this.memory.storeWord(i * 4, instruction);
+
+        }
+
+    }
+    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+        //Se limpia todos los registros y cuadro de texto de output
+        this.clean();
+
+        //Se obtiene el código del cuadro del texto, se le quitan tabs, líneas en blanco, múltiples espacios
+        this.formatCode();
+
+        //Se obtiene el codigo
+        String[] lines = this.codeText.getText().split("\\n");
+
+        //Se escribe el archivo de texto con el código
+        this.writeTXTCode(lines);
+
         try {
             codeGenerator.generateCode();
-            imprimeInstrucciones();
-            showErrors();
-            //  System.out.println(this.OutputText.getText().length());
+
+            this.showErrors();
+
             if (this.OutputText.getText().length() == 51 & this.OutputText.getText().contains("The code generation has been successful.")) {
+                this.fillMemoryProgram();
+
                 for (int i = 0; i < lines.length; i++) {
                     this.hashLabel.fillHashTable(lines[i], i);
                 }
                 Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel, this.reserveInstructions, this.OutputText);
+
                 for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
-                    System.out.println("Line: " + lines[i]);
-                    operation.selectOperation(lines[i]);
-                    this.fillConditionalFlags();
-                    this.fillMemoryTable();
-                    this.fillRegisterTable();
+                    if (operation.error == false) {
+                        System.out.println("Line: " + lines[i]);
+                        operation.selectOperation(lines[i]);
+                        this.fillConditionalFlags();
+                        this.fillMemoryTable();
+                        this.fillRegisterTable();
+
+                    } else {                        
+                        break;
+                    }
+
                 }
             }
         } catch (IOException ex) {
@@ -670,6 +719,44 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private static void copyFileUsingStream(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
+    }
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                //
+                this.OutputText.setText("Output: \r\n");
+                this.codeGenerator.generateCode();
+                this.showErrors();
+                File source = new File("out.txt");
+                File dest = new File(fileChooser.getSelectedFile() + ".txt");
+                //copy file conventional way using Stream
+                copyFileUsingStream(source, dest);
+            } catch (IOException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
