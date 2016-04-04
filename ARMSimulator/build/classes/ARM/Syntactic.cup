@@ -39,7 +39,7 @@ action code {:
 
 
 terminal String AND,EOR,SUB,RSB,ADD,ADC,SBC,RSC,CMP,CMN,ORR,MOV;
-terminal String LSL,ASR,RRX,ROR,BIC,MVN,MUL,MLA;
+terminal String LSL,LSR,ASR,RRX,ROR,BIC,MVN,MUL,MLA;
 terminal String STR, LDR, STRB, LDRB;
 terminal String B,BGE,BLE,BLT,BGT,BEQ,BNE;
 terminal String BL,BLEQ,BLNE,BLGE,BLLT,BLGT,BLLE;
@@ -96,13 +96,19 @@ instruction ::= AND:a register:r1 COMA:b register:r2 COMA:c register:r3 {:RESULT
 	| MOV register:r1 COMA DECIMALIMMEDIATE:r2 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrDecImmediate("1110", "1101", "0000", r1, r2);:}
         | MOV register:r1 COMA HEXIMMEDIATE:r2 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrHexImmediate("1110", "1101", "0000", r1, r2);:}
 	| LSL register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterShiftedRegister("1110","00","0","1101","0","0000",r1,r3,"00",r2);:}
-	| LSL register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrDecImmediate("1110", "1101", r1, r3, "00", r2);:} 
+	| LSL register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrDecImmediate("1110", "1101", r1, r3, "00", r2);:}
+        | LSL register:r1 COMA register:r2 COMA HEXIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrHexImmediate("1110", "1101", r1, r3, "00", r2);:}
+        | LSR register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterShiftedRegister("1110","00","0","1101","0","0000",r1,r3,"01",r2);:}
+	| LSR register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrDecImmediate("1110", "1101", r1, r3, "01", r2);:}
+        | LSR register:r1 COMA register:r2 COMA HEXIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrHexImmediate("1110", "1101", r1, r3, "01", r2);:}
 	| ASR register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterShiftedRegister("1110","00","0","1101","0","0000",r1,r3,"10",r2);:}
 	| ASR register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrDecImmediate("1110", "1101", r1, r3, "10", r2);:} 
+        | ASR register:r1 COMA register:r2 COMA HEXIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrHexImmediate("1110", "1101", r1, r3, "10", r2);:} 
 	| RRX register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterShiftedRegister("1110","00","0","1101","0","0000",r1,r3,"11",r2);:}
 	| RRX register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrDecImmediate("1110", "1101", r1, r3, "11", r2);:} 
 	| ROR register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterShiftedRegister("1110","00","0","1101","0","0000",r1,r3,"11",r2);:}
 	| ROR register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrDecImmediate("1110", "1101", r1, r3, "11", r2);:} 
+        | ROR register:r1 COMA register:r2 COMA HEXIMMEDIATE:r3 {:RESULT=CodeGeneration.generateCodeShiftInstrHexImmediate("1110", "1101", r1, r3, "11", r2);:} 
 	| BIC register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterOnly("1110","00","0","1110","0",r2,r1,"00000","00",r3);:}
 	| BIC register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrDecImmediate("1110", "1110", r2, r1, r3);:}
 	| MVN register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterOnly("1110","00","0","1111","0",r2,r1,"00000","00",r3);:}

@@ -498,6 +498,52 @@ String cmd, Object Rd, Object shamt5, String sh, Object Rm) throws IOException{
     //Initialize the variables that are going to be used in the code generation
     int shamt_value= Integer.parseInt(shamt); //contains the value of the shamt
     String shamt_register = "";
+    
+    if((shamt_value > 31) && (shamt_value >= 0)){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Immediate Size Error: The size of the immediate is too large");
+
+    }
+
+    shamt_register = Integer.toBinaryString(shamt_value + 0b100000).substring(1); //shamt of 5 bits
+    
+    //Convert to integer each register to his corresponding binary
+    int destination_register = Integer.parseInt(rd);
+    int sourcerm_register = Integer.parseInt(rm);
+
+    //Convert each register to his binary value(4 bits)
+    String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
+    String register_rm = Integer.toBinaryString(sourcerm_register+ 0b10000).substring(1);
+    
+    //Decodes the instruction to hexadecimal
+    String hexCode = cond + "00" + "0" + cmd + "0" + "0000" + register_rd + shamt_register + sh + "0" + register_rm;
+    generateHexInstruction(hexCode);
+    return "The generated code is: " + cmd  + cond + Rd + Rm ;
+ }
+
+/**
+  * This function is responsible for generating the code for
+  * data-processing shifts instructions that use hex immediate
+ **/
+public static String generateCodeShiftInstrHexImmediate(String cond, 
+String cmd, Object Rd, Object shamt5, String sh, Object Rm) throws IOException{
+
+    String rd = Rd.toString();
+    rd = rd.substring(1,rd.length()); //extract the number of rd
+    String rm = Rm.toString();
+    rm = rm.substring(1,rm.length()); //extract the number of rm
+    String shamt = shamt5.toString();
+    shamt = shamt.substring(1,shamt.length()); //contains the shamt
+   
+    //Initialize the variables that are going to be used in the code generation
+    int shamt_value= Integer.decode(shamt); //contains the value of the shamt
+    String shamt_register = "";
+    
+    if((shamt_value > 31) && (shamt_value >= 0)){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Immediate Size Error: The size of the immediate is too large");
+
+    }
 
     shamt_register = Integer.toBinaryString(shamt_value + 0b100000).substring(1); //shamt of 5 bits
     
