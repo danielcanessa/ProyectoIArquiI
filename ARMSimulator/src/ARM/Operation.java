@@ -23,6 +23,7 @@ public class Operation {
     List<List<String>> hashTableLabels;
     ReserveInstructions reserveInstructions;
     JTextArea OutputText;
+    boolean error;
 
     public Operation(Register bankRegister, Memory memory, ConditionFlags conditionFlag, HashLabel hashLabel, ReserveInstructions reserveInstructions, JTextArea OutputText) {
         this.hashTableLabels = new ArrayList<>();
@@ -33,6 +34,7 @@ public class Operation {
         this.hashLabel = hashLabel;
         this.reserveInstructions = reserveInstructions;
         this.OutputText = OutputText;
+        this.error=false;
 
     }
 
@@ -61,6 +63,7 @@ public class Operation {
 
         } else if (this.hashLabel.findLabel(fixInstruction) == -1) {
             System.out.println("Instruccion no reconocida: " + instruction);
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Instrucción no reconocida: " + instruction + ", línea: " + this.pcCounter + "\r\n");
         }
 
@@ -382,13 +385,17 @@ public class Operation {
                 this.mov(rd, Long.parseLong(word, 16));
 
             } else {
+                this.error=true;
                 OutputText.setText(OutputText.getText() + "Memoria desalineada, se intentó hacer un ldr del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
                 //System.out.println("Memoria desalineada ldr dirección: " + memorySlot);
             }
         } else if (memorySlot >= 0 & memorySlot < 1024) {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un ldr del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         } else {
+            this.error=true;
+            
             OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un ldr del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
@@ -407,9 +414,11 @@ public class Operation {
             this.mov(rd, Long.parseLong(resultByte, 16));
 
         } else if (memorySlot >= 0 & memorySlot < 1024) {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un ldrb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         } else {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un ldrb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
@@ -435,13 +444,16 @@ public class Operation {
                 this.memory.storeWord(memorySlot.intValue(), hexRd);
 
             } else {
+                this.error=true;
                 OutputText.setText(OutputText.getText() + "Memoria desalineada, se intentó hacer un str del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
                 //System.out.println("Memoria desalineada str dirección: " + memorySlot);
             }
         } else if (memorySlot >= 0 & memorySlot < 1024) {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un str del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         } else {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un str del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
@@ -465,9 +477,11 @@ public class Operation {
             }
             this.memory.storeByte(memorySlot.intValue(), hexRd);
         } else if (memorySlot >= 0 & memorySlot < 1024) {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria reservada para memoria del programa, se intentó hacer un strb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         } else {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Posición de memoria no existente, se intentó hacer un strb del slot de memoria: " + memorySlot + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Posición no existente en la memoria");
         }
@@ -485,6 +499,7 @@ public class Operation {
         if (!"".equals(regValue)) {
             return castHexRegStringToLong(regValue);
         } else {
+            this.error=true;
             OutputText.setText(OutputText.getText() + "Se intentó acceder a un registro de una manera no soportada por la instrucción: " + reg + ", en la línea: " + this.pcCounter + "\r\n");
             //System.out.println("Error se intentó acceder a un registro que no tenía nada escrito: " + reg);
             return null;
