@@ -1,1 +1,1 @@
-add r16,r14,r0
+LSR R4,R8,R6
