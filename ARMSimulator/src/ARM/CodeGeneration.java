@@ -204,6 +204,12 @@ public static int findDirection(String labelName){
     int destination_register = Integer.parseInt(rd);
     int sourcern_register = Integer.parseInt(rn);
     int sourcerm_register = Integer.parseInt(rm);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcerm_register > 15) || (0 > sourcerm_register))
+            || ((sourcern_register > 15) || (0 > sourcern_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Converts each register number to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -237,6 +243,12 @@ public static String generateCodeAddressingRegisterShiftedRegister(String cond, 
     int destination_register = Integer.parseInt(rd);
     int sourcers_register = Integer.parseInt(rs);
     int sourcerm_register = Integer.parseInt(rm);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcerm_register > 15) || (0 > sourcerm_register))
+            || ((sourcers_register > 15) || (0 > sourcers_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -270,6 +282,12 @@ String s, Object Rd, Object Ra, Object Rm,  Object Rn) throws IOException{
     int sourcern_register = Integer.parseInt(rn);
     int sourcerm_register = Integer.parseInt(rm);
     int sourcera_register = Integer.parseInt(ra);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcerm_register > 15) || (0 > sourcerm_register))
+            || ((sourcern_register > 15) || (0 > sourcern_register)) || ((sourcera_register > 15) || (0 > sourcera_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -305,6 +323,12 @@ Object Rn, Object Rd, Object Rm) throws IOException{
     int destination_register = Integer.parseInt(rd);
     int sourcern_register = Integer.parseInt(rn);
     int sourcerm_register = Integer.parseInt(rm);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcerm_register > 15) || (0 > sourcerm_register))
+            || ((sourcern_register > 15) || (0 > sourcern_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -348,6 +372,11 @@ String b, String l, Object Rn, Object Rd, Object hex_immediate) throws IOExcepti
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
     int sourcern_register = Integer.parseInt(rn);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcern_register > 15) || (0 > sourcern_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -395,6 +424,11 @@ String b, String l, Object Rn, Object Rd, Object decimal_immediate) throws IOExc
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
     int sourcern_register = Integer.parseInt(rn);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcern_register > 15) || (0 > sourcern_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -469,6 +503,11 @@ String cmd, Object Rn, Object Rd, Object decimal_immediate) throws IOException{
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
     int sourcern_register = Integer.parseInt(rn);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcern_register > 15) || (0 > sourcern_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -510,6 +549,11 @@ String cmd, Object Rd, Object shamt5, String sh, Object Rm) throws IOException{
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
     int sourcerm_register = Integer.parseInt(rm);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcerm_register > 15) || (0 > sourcerm_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -550,6 +594,11 @@ String cmd, Object Rd, Object shamt5, String sh, Object Rm) throws IOException{
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
     int sourcerm_register = Integer.parseInt(rm);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcerm_register > 15) || (0 > sourcerm_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
@@ -615,6 +664,11 @@ String cmd, Object Rn, Object Rd, Object hex_immediate) throws IOException{
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
     int sourcern_register = Integer.parseInt(rn);
+    
+    if(((destination_register > 15) || (0 > destination_register)) || ((sourcern_register > 15) || (0 > sourcern_register))){
+        CodeGeneration.semanticError = 1;
+        CodeGeneration.errorList.add("Register Number Error: The register dont exist");
+    }
 
     //Convert each register to his binary value(4 bits)
     String register_rd = Integer.toBinaryString(destination_register + 0b10000).substring(1);
