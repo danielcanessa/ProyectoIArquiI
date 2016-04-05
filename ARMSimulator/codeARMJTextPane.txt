@@ -1,2 +1,1 @@
-ADD R0,R1,R2
-SUB R4,R5,R6
+mov pc,#10
