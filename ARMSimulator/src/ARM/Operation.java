@@ -73,7 +73,7 @@ public class Operation {
             OutputText.setText(OutputText.getText() + "Instrucción no reconocida: " + instruction + ", línea: " + this.pcCounter + "\r\n");
         }
        
-       this.mov("r15_update", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
+       this.mov("r15_update", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
 
     }
 
@@ -661,6 +661,10 @@ public class Operation {
         {
             rd="r15";
         }
+        if("lr".equals(rd))
+        {
+            rd="r14";
+        }
         bankRegister.setRegister(rd, "0x" + hexSrc2);
     }
 
@@ -744,12 +748,12 @@ public class Operation {
         }
 
         if (binaryRn.charAt(0) != binaryResult.charAt(0)) {
-            if (op == "add") {
+            if ("add".equals(op)) {
                 if (binaryRn.charAt(0) == binarySrc2.charAt(0)) {
                     result = true;
                 }
             }
-            if (op == "sub") {
+            if ("sub".equals(op)) {
                 if (binaryRn.charAt(0) != binarySrc2.charAt(0)) {
                     result = true;
                 }
@@ -834,7 +838,7 @@ public class Operation {
         String rnBinary=Long.toBinaryString(rnValue);
         if(rnBinary.length()<32)
         {
-            System.out.println("nooo");
+            
             String aux="";
             for (int i = 0; i < 32-rnBinary.length(); i++) {
                 aux=aux+"0";               

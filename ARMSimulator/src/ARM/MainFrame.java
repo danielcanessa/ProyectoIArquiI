@@ -724,11 +724,12 @@ public class MainFrame extends javax.swing.JFrame {
                 for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
                     if (operation.error == false) {
                         if (operation.branchesExecute < 1000) {
-                            System.out.println("Line: " + lines[i]);
+                            //System.out.println("Line: " + lines[i]);
                             operation.selectOperation(lines[i]);
 
                             this.ClockCyclesText.setText("" + operation.clockCycles);
-                            double runTime = (0.00001 * operation.clockCycles);
+                            float runTime = (float) (0.00001 * operation.clockCycles);
+                            
                             this.runtimeText.setText("" + runTime + "s");
                             this.fillConditionalFlags();
                             this.fillMemoryTable();
