@@ -48,6 +48,7 @@ public class ReserveInstructions {
         DataProcessingInstructions.add("rrx ");
         DataProcessingInstructions.add("cmp ");
         DataProcessingInstructions.add("cmn ");
+        DataProcessingInstructions.add("adc ");
 
     }
 
