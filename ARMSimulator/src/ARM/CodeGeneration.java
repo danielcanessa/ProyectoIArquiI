@@ -194,11 +194,14 @@ public static int findDirection(String labelName){
  String cmd, String s, Object Rn, Object Rd, String shamt5, String sh, Object Rm) throws IOException{
     
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extracts the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extracts the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd; //extracts the number of rd
     String rn = Rn.toString(); 
-    rn = rn.substring(1,rn.length()); //extracts the number of rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extracts the number of rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn; //extracts the number of rd
     String rm = Rm.toString();
-    rm = rm.substring(1,rm.length()); //extracts the number of rm
+    rm = (rm == "PC" || rm =="pc") ? "15" :rm.substring(1,rm.length()); //extracts the number of rm
+    rm = (rm == "LR" || rm =="lr") ? "14" : rm; //extracts the number of rd
 
     //Convert to integer each register to convert it to his corresponding binary
     int destination_register = Integer.parseInt(rd);
@@ -233,11 +236,14 @@ public static String generateCodeAddressingRegisterShiftedRegister(String cond, 
  String cmd, String s, String Rn, Object Rd, Object Rs, String sh, Object Rm) throws IOException{
     
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rs = Rs.toString(); 
-    rs = rs.substring(1,rs.length()); //extract the number of rs
+    rs = (rs == "PC" || rs =="pc") ? "15" : rs.substring(1,rs.length()); //extract the number of rs
+    rs = (rs == "LR" || rs =="lr") ? "14" : rs;
     String rm = Rm.toString();
-    rm = rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "PC" || rm =="pc") ? "15" : rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "LR" || rm =="lr") ? "14" : rm;
 
     //Convert to integer each register to convert it to his corresponding binary
     int destination_register = Integer.parseInt(rd);
@@ -269,13 +275,17 @@ public static String generateCodeMultiplicationInstr(String cond, String cmd,
 String s, Object Rd, Object Ra, Object Rm,  Object Rn) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rm = Rm.toString(); 
-    rm = rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "PC" || rm =="pc") ? "15" : rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "LR" || rm =="lr") ? "14" : rm;
     String rn = Rn.toString();
-    rn = rn.substring(1,rn.length()); //extract the number of rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extract the number of rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn;
     String ra = Ra.toString();
-    ra = ra.substring(1,ra.length()); //extract the number of ra
+    ra = (ra == "PC" || ra =="pc") ? "15" : ra.substring(1,ra.length()); //extract the number of ra
+    ra = (ra == "LR" || ra =="lr") ? "14" : ra;
 
     //Convert to integer each register to his corresponding binary
     int destination_register = Integer.parseInt(rd);
@@ -310,11 +320,14 @@ String p, String u, String b ,String w, String l,
 Object Rn, Object Rd, Object Rm) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number off rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number off rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rn = Rn.toString();
-    rn = rn.substring(1,rn.length()); //extract the number off rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extract the number off rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn;
     String rm = Rm.toString();
-    rm = rm.substring(1,rm.length()); //contains the number off rm
+    rm = (rm == "PC" || rm =="pc") ? "15" : rm.substring(1,rm.length()); //contains the number off rm
+    rm = (rm == "LR" || rm =="lr") ? "14" : rm;
 
     //Variables that containst the number of the register(Check if it is correct)
    
@@ -350,9 +363,11 @@ public static String generateCodeMemoryInstrHexImmediate(String cond, String p, 
 String b, String l, Object Rn, Object Rd, Object hex_immediate) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number off rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number off rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rn = Rn.toString();
-    rn = rn.substring(1,rn.length()); //extract the number off rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extract the number off rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn;
     String immediate = hex_immediate.toString();
     immediate = immediate.substring(1,immediate.length()); //contains the imm
     
@@ -398,9 +413,11 @@ public static String generateCodeMemoryInstrDecImmediate(String cond, String p ,
 String b, String l, Object Rn, Object Rd, Object decimal_immediate) throws IOException{
     
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number off rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number off rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rn = Rn.toString();
-    rn = rn.substring(1,rn.length()); //extract the number off rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extract the number off rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn;
     String immediate = decimal_immediate.toString();
     
     immediate = immediate.substring(1,immediate.length()); //have the imm
@@ -448,9 +465,11 @@ public static String generateCodeDataProcessingInstrDecImmediate(String cond,
 String cmd, Object Rn, Object Rd, Object decimal_immediate) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rn = Rn.toString();
-    rn = rn.substring(1,rn.length()); //extract the number of rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extract the number of rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn;
     String immediate = decimal_immediate.toString();
     immediate = immediate.substring(1,immediate.length()); //have the imm
     
@@ -528,9 +547,11 @@ public static String generateCodeShiftInstrDecImmediate(String cond,
 String cmd, Object Rd, Object shamt5, String sh, Object Rm) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rm = Rm.toString();
-    rm = rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "PC" || rm =="pc") ? "15" : rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "LR" || rm =="lr") ? "14" : rm;
     String shamt = shamt5.toString();
     shamt = shamt.substring(1,shamt.length()); //contains the shamt
     
@@ -573,9 +594,11 @@ public static String generateCodeShiftInstrHexImmediate(String cond,
 String cmd, Object Rd, Object shamt5, String sh, Object Rm) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rm = Rm.toString();
-    rm = rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "PC" || rm =="pc") ? "15" : rm.substring(1,rm.length()); //extract the number of rm
+    rm = (rm == "LR" || rm =="lr") ? "14" : rm;
     String shamt = shamt5.toString();
     shamt = shamt.substring(1,shamt.length()); //contains the shamt
    
@@ -619,9 +642,11 @@ public static String generateCodeDataProcessingInstrHexImmediate(String cond,
 String cmd, Object Rn, Object Rd, Object hex_immediate) throws IOException{
 
     String rd = Rd.toString();
-    rd = rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "PC" || rd =="pc") ? "15" : rd.substring(1,rd.length()); //extract the number of rd
+    rd = (rd == "LR" || rd =="lr") ? "14" : rd;
     String rn = Rn.toString();
-    rn = rn.substring(1,rn.length()); //extract the number of rn
+    rn = (rn == "PC" || rn =="pc") ? "15" : rn.substring(1,rn.length()); //extract the number of rn
+    rn = (rn == "LR" || rn =="lr") ? "14" : rn;
     String immediate = hex_immediate.toString();
     immediate = immediate.substring(1,immediate.length()); //have the imm
 
