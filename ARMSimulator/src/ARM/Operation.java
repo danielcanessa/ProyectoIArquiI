@@ -156,11 +156,14 @@ public class Operation {
             if (instruction.contains("bic ")) {
                 this.bic(rd, rnValue, src2Value);
             }
-
+            if (instruction.contains("rrx ")) {
+                this.rrx(rd, rnValue, src2Value);
+            }
         }
 
     }
 
+    
     public void multiplyDecodeInstruction(String instruction) {
         String decodeInstruction = instruction.replace(" ", "").substring(3).trim();
         String rd = decodeInstruction.substring(0, decodeInstruction.indexOf(','));
@@ -603,9 +606,26 @@ public class Operation {
     }
 
     public void ror(String rd, Long rn, Long src2) {
-        String concat = "";
-        String aux = Long.toBinaryString(rn);
+        
+        if(src2>32){
+            while(src2>32)
+            {
+                src2=src2-32;
+            }
+        }
+        
+       String concat = "";        
+       String aux = Long.toBinaryString(rn);     
         int length = aux.length();
+        if(length<32){
+            String zeros="";
+            for (int i = 0; i < 32-length; i++) {
+                zeros=zeros+"0";              
+                
+            }
+            aux=zeros+aux;
+            length=32;
+        }
         if (length > src2) {
             String rot = aux.substring(length - src2.intValue());
             String old = aux.substring(0, length - src2.intValue());
@@ -618,6 +638,8 @@ public class Operation {
             concat = concat + old;
         }
         Long result = Long.parseLong(concat, 2);
+        
+       // System.out.println("Result:"+Long.toHexString(Long.rotateRight(rn, src2.intValue())));
         this.mov(rd, result);
     }
 
@@ -806,6 +828,32 @@ public class Operation {
         this.conditionFlag.setCarry(this.verifyCarry(lenghtResult));
         //overflow 
         this.conditionFlag.setoVerflow(this.verifyOverflow(binaryRn, binarySrc2, binaryResult, lenghtResult, "sub"));
+    }
+
+    public void rrx(String rd, Long rnValue, Long src2Value) {
+        String rnBinary=Long.toBinaryString(rnValue);
+        if(rnBinary.length()<32)
+        {
+            System.out.println("nooo");
+            String aux="";
+            for (int i = 0; i < 32-rnBinary.length(); i++) {
+                aux=aux+"0";               
+                
+            }
+            rnBinary=aux+rnBinary;
+        }
+        if(this.conditionFlag.isCarry())
+        {
+            rnBinary="1"+rnBinary;
+        }
+        else
+        {
+            rnBinary="0"+rnBinary;
+        }
+       
+        this.mov(rd, Long.parseLong(rnBinary.substring(0,rnBinary.length()-1 ), 2));
+       
+        
     }
 
 }

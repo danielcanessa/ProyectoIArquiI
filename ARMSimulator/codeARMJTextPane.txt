@@ -1,1 +1,7 @@
-mov r15,#0xFF
+mov r1, #0xf
+ror r1, r1, #4
+mov r2, #0x7
+mov r3, #0
+ror r2, r2, #4
+cmn r1, r2
+rrx r3, r3,#4
