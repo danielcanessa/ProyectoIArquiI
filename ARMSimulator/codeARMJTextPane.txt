@@ -14,15 +14,11 @@ b waitPC
 size
 LDRB r3,[r2,#0]
 mov r9, #4
-b multiplicacion
-multiplicacion
-cmp r8,#0x4
-BGE initFibonacci
-add r3,r3,r9
-add r8,r8,#1
-b multiplicacion
-initFibonacci
+mul r3,r3,r9
 sub r3,r3,#8
+mov r9,r3
+mov r8, #1
+initFibonacci
 mov r0, #0x440
 mov r1, #1
 str r1,[r0,#0]
