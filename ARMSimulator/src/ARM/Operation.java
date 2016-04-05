@@ -25,6 +25,7 @@ public class Operation {
     JTextArea OutputText;
     boolean error;
     int clockCycles;
+    int branchesExecute;
 
     public Operation(Register bankRegister, Memory memory, ConditionFlags conditionFlag, HashLabel hashLabel, ReserveInstructions reserveInstructions, JTextArea OutputText) {
         this.hashTableLabels = new ArrayList<>();
@@ -37,6 +38,7 @@ public class Operation {
         this.OutputText = OutputText;
         this.error=false;
         this.clockCycles = 0;
+        this.branchesExecute=0;
 
     }
 
@@ -48,7 +50,7 @@ public class Operation {
         //OutputText.setText(OutputText.getText()+"Instrucción ejecutada: "+instruction+"\r\n");
 
         // System.out.println(instruction);
-        this.mov("r15", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
+       // 
         this.pcCounter += 1;
         this.clockCycles += 1;
 
@@ -62,6 +64,7 @@ public class Operation {
             this.memoryDecodeInstruction(fixInstruction);
 
         } else if (this.reserveInstructions.isBranchInstructions(fixInstruction)) {
+            this.branchesExecute+=1;
             this.BranchDecodeInstruction(fixInstruction);
 
         } else if (this.hashLabel.findLabel(fixInstruction) == -1) {
@@ -69,6 +72,8 @@ public class Operation {
             this.error=true;
             OutputText.setText(OutputText.getText() + "Instrucción no reconocida: " + instruction + ", línea: " + this.pcCounter + "\r\n");
         }
+       
+       this.mov("r15_update", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
 
     }
 
@@ -621,6 +626,18 @@ public class Operation {
         int length = hexSrc2.length();
         if (length > 8) {
             hexSrc2 = hexSrc2.substring(length - 8);
+        }
+        
+        
+        if("pc".equals(rd) || "r15".equals(rd))
+        {           
+            rd="r15";
+            this.branchesExecute+=1;
+            this.pcCounter=(int) (src2/4);
+        }
+        if("r15_update".equals(rd))
+        {
+            rd="r15";
         }
         bankRegister.setRegister(rd, "0x" + hexSrc2);
     }

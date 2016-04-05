@@ -1,2 +1,1 @@
-la
-b la
+mov r15,#0xFF

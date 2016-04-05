@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -497,7 +498,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1373, Short.MAX_VALUE)
                     .addComponent(jScrollPane3)
                     .addComponent(jScrollPane5))
@@ -719,21 +720,34 @@ public class MainFrame extends javax.swing.JFrame {
                     this.hashLabel.fillHashTable(lines[i], i);
                 }
                 Operation operation = new Operation(this.register, this.memory, this.conditionFlag, this.hashLabel, this.reserveInstructions, this.OutputText);
-                
-                
+
                 for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
                     if (operation.error == false) {
-                        System.out.println("Line: " + lines[i]);
-                        operation.selectOperation(lines[i]);
-                       
-                        this.ClockCyclesText.setText(""+operation.clockCycles);
-                        double runTime =(0.00001*operation.clockCycles);
-                        this.runtimeText.setText(""+runTime+"s");
-                        this.fillConditionalFlags();
-                        this.fillMemoryTable();
-                        this.fillRegisterTable();
+                        if (operation.branchesExecute < 1000) {
+                            System.out.println("Line: " + lines[i]);
+                            operation.selectOperation(lines[i]);
 
-                    } else {                        
+                            this.ClockCyclesText.setText("" + operation.clockCycles);
+                            double runTime = (0.00001 * operation.clockCycles);
+                            this.runtimeText.setText("" + runTime + "s");
+                            this.fillConditionalFlags();
+                            this.fillMemoryTable();
+                            this.fillRegisterTable();
+                        } else {
+                            int dialogButton = JOptionPane.YES_NO_OPTION;
+                            int dialogResult = JOptionPane.showConfirmDialog (null, "1000 branches. Would you like to exit the execution?","Warning",dialogButton);
+                            if(dialogResult  == 0)
+                            {                                
+                                break;
+                                
+                            } 
+                            else
+                            {
+                                operation.branchesExecute=0;
+                            }
+                        }
+
+                    } else {
                         break;
                     }
 
