@@ -1,1 +1,1 @@
-LSR R4,R8,R6
+MOV PC,#10

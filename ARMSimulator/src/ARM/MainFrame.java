@@ -210,7 +210,6 @@ public class MainFrame extends javax.swing.JFrame {
         ));
         memoryTable.setFillsViewportHeight(true);
         memoryTable.setFocusable(false);
-        memoryTable.setGridColor(java.awt.SystemColor.controlShadow);
         memoryTable.setRowHeight(24);
         memoryTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         memoryTable.setShowHorizontalLines(false);
@@ -235,7 +234,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         registerTable.setFillsViewportHeight(true);
         registerTable.setFocusable(false);
-        registerTable.setGridColor(java.awt.SystemColor.controlShadow);
         registerTable.setRowHeight(24);
         registerTable.setSelectionBackground(new java.awt.Color(102, 102, 102));
         jScrollPane2.setViewportView(registerTable);

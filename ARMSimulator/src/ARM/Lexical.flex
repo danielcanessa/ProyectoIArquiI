@@ -86,9 +86,9 @@ BLLTINSTRUCTION = "BLLT"|"bllt"
 BLGTINSTRUCTION = "BLGT"|"blgt"
 BLLEINSTRUCTION = "BLLE"|"blle"
 REGISTER_ID = "R" | "r"
-PC_ID = "PC" | "pc"
-LR_ID = "LR" | "lr"
-REGISTER_NUMBER = {REGISTER_ID} {Number}
+//PC_ID = "PC" | "pc"
+//LR_ID = "LR" | "lr"
+REGISTER_NUMBER = {REGISTER_ID} {Number} | "PC" | "pc" | "LR" | "lr"
 HEXADECIMAL_IMMEDIATE = ("#0x"|"#0X")[0-9|A-Fa-f]+
 DECIMAL_IMMEDIATE = "#"(-?)[0-9]+
 SPECIAL_CHARACTER = [<>*+.:$()'\"/;`%]
@@ -229,8 +229,8 @@ return new Symbol(sym.BLLE,yyline,yychar,  yytext());}
 {REGISTER_NUMBER} {return new Symbol(sym.REGISTER,yyline,yychar,  yytext());}
 {HEXADECIMAL_IMMEDIATE} {return new Symbol(sym.HEXIMMEDIATE,yyline,yychar,  yytext());}
 {DECIMAL_IMMEDIATE} {return new Symbol(sym.DECIMALIMMEDIATE,yyline,yychar,  yytext());}
-{PC_ID} {return new Symbol(sym.PC,yyline,yychar,  yytext());}
-{LR_ID} {return new Symbol(sym.LR,yyline,yychar,  yytext());}
+//{PC_ID} {return new Symbol(sym.PC,yyline,yychar,  yytext());}
+//{LR_ID} {return new Symbol(sym.LR,yyline,yychar,  yytext());}
 
 {LABEL_NAME} {
 addLabel(yytext(), direction);
