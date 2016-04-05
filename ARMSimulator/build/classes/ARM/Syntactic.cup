@@ -92,7 +92,7 @@ instruction ::= AND:a register:r1 COMA:b register:r2 COMA:c register:r3 {:RESULT
 	| ORR register:r1 COMA register:r2 COMA DECIMALIMMEDIATE:r3 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrDecImmediate("1110", "1100", r2, r1, r3);:}
         | ORR register:r1 COMA register:r2 COMA HEXIMMEDIATE:r3 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrHexImmediate("1110", "1100", r2, r1, r3);:}
 	| MOV register:r1 COMA register:r2 {:RESULT=CodeGeneration.generateCodeAddressingRegisterOnly("1110","00","0","1101","0","0000",r1,"00000","00",r2);:}
-       // | MOV PC:r1 COMA LR:r2 {:RESULT=CodeGeneration.generateCodeAddressingRegisterOnly("1110","00","0","1101","0","0000","R15","00000","00","R14");:}
+       
 	| MOV register:r1 COMA DECIMALIMMEDIATE:r2 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrDecImmediate("1110", "1101", "0000", r1, r2);:}
         | MOV register:r1 COMA HEXIMMEDIATE:r2 {:RESULT= CodeGeneration.generateCodeDataProcessingInstrHexImmediate("1110", "1101", "0000", r1, r2);:}
 	| LSL register:r1 COMA register:r2 COMA register:r3 {:RESULT=CodeGeneration.generateCodeAddressingRegisterShiftedRegister("1110","00","0","1101","0","0000",r1,r3,"00",r2);:}
