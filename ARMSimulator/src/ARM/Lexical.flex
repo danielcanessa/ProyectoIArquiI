@@ -59,6 +59,7 @@ CMNINSTRUCTION = "CMN"|"cmn"
 ORRINSTRUCTION = "ORR"|"orr"
 MOVINSTRUCTION = "MOV"|"mov"
 LSLINSTRUCTION = "LSL"|"lsl"
+LSRINSTRUCTION = "LSR"|"lsr"
 ASRINSTRUCTION = "ASR"|"asr"
 RRXINSTRUCTION = "RRX"|"rrx"
 RORINSTRUCTION = "ROR"|"ror"
@@ -146,6 +147,9 @@ return new Symbol(sym.MOV,yyline,yychar,  yytext());}
 {LSLINSTRUCTION} {direction = direction + 4;
 newLabel = 1;
 return new Symbol(sym.LSL,yyline,yychar,  yytext());}
+{LSRINSTRUCTION} {direction = direction + 4;
+newLabel = 1;
+return new Symbol(sym.LSR,yyline,yychar,  yytext());}
 {ASRINSTRUCTION} {direction = direction + 4;
 newLabel = 1;
 return new Symbol(sym.ASR,yyline,yychar,  yytext());}

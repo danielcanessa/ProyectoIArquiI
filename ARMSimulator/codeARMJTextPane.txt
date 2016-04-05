@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 mov r2, #0x420
 mov r6, #15
 strb r6,[r2,#0]
@@ -36,3 +37,6 @@ str r4,[r0,r1]
 sub r1,r1,#4
 b fibonacci
 done
+=======
+LSR R4,R8,R6
+>>>>>>> origin/master
