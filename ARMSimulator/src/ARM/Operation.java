@@ -24,6 +24,7 @@ public class Operation {
     ReserveInstructions reserveInstructions;
     JTextArea OutputText;
     boolean error;
+    int clockCycles;
 
     public Operation(Register bankRegister, Memory memory, ConditionFlags conditionFlag, HashLabel hashLabel, ReserveInstructions reserveInstructions, JTextArea OutputText) {
         this.hashTableLabels = new ArrayList<>();
@@ -35,6 +36,7 @@ public class Operation {
         this.reserveInstructions = reserveInstructions;
         this.OutputText = OutputText;
         this.error=false;
+        this.clockCycles = 0;
 
     }
 
@@ -48,6 +50,7 @@ public class Operation {
         // System.out.println(instruction);
         this.mov("r15", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
         this.pcCounter += 1;
+        this.clockCycles += 1;
 
         String fixInstruction = instruction.toLowerCase().trim();
         if (this.reserveInstructions.isDataProcessingInstructions(fixInstruction)) {
