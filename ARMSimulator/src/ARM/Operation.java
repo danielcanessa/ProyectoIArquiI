@@ -24,6 +24,8 @@ public class Operation {
     ReserveInstructions reserveInstructions;
     JTextArea OutputText;
     boolean error;
+    int clockCycles;
+    int branchesExecute;
 
     public Operation(Register bankRegister, Memory memory, ConditionFlags conditionFlag, HashLabel hashLabel, ReserveInstructions reserveInstructions, JTextArea OutputText) {
         this.hashTableLabels = new ArrayList<>();
@@ -35,6 +37,8 @@ public class Operation {
         this.reserveInstructions = reserveInstructions;
         this.OutputText = OutputText;
         this.error=false;
+        this.clockCycles = 0;
+        this.branchesExecute=0;
 
     }
 
@@ -46,8 +50,9 @@ public class Operation {
         //OutputText.setText(OutputText.getText()+"Instrucción ejecutada: "+instruction+"\r\n");
 
         // System.out.println(instruction);
-        this.mov("r15", Long.parseLong(Integer.toString((this.pcCounter + 2) * 4)));
+       // 
         this.pcCounter += 1;
+        this.clockCycles += 1;
 
         String fixInstruction = instruction.toLowerCase().trim();
         if (this.reserveInstructions.isDataProcessingInstructions(fixInstruction)) {
@@ -59,6 +64,7 @@ public class Operation {
             this.memoryDecodeInstruction(fixInstruction);
 
         } else if (this.reserveInstructions.isBranchInstructions(fixInstruction)) {
+            this.branchesExecute+=1;
             this.BranchDecodeInstruction(fixInstruction);
 
         } else if (this.hashLabel.findLabel(fixInstruction) == -1) {
@@ -66,6 +72,8 @@ public class Operation {
             this.error=true;
             OutputText.setText(OutputText.getText() + "Instrucción no reconocida: " + instruction + ", línea: " + this.pcCounter + "\r\n");
         }
+       
+       this.mov("r15_update", Long.parseLong(Integer.toString((this.pcCounter + 1) * 4)));
 
     }
 
@@ -148,11 +156,14 @@ public class Operation {
             if (instruction.contains("bic ")) {
                 this.bic(rd, rnValue, src2Value);
             }
-
+            if (instruction.contains("rrx ")) {
+                this.rrx(rd, rnValue, src2Value);
+            }
         }
 
     }
 
+    
     public void multiplyDecodeInstruction(String instruction) {
         String decodeInstruction = instruction.replace(" ", "").substring(3).trim();
         String rd = decodeInstruction.substring(0, decodeInstruction.indexOf(','));
@@ -595,9 +606,26 @@ public class Operation {
     }
 
     public void ror(String rd, Long rn, Long src2) {
-        String concat = "";
-        String aux = Long.toBinaryString(rn);
+        
+        if(src2>32){
+            while(src2>32)
+            {
+                src2=src2-32;
+            }
+        }
+        
+       String concat = "";        
+       String aux = Long.toBinaryString(rn);     
         int length = aux.length();
+        if(length<32){
+            String zeros="";
+            for (int i = 0; i < 32-length; i++) {
+                zeros=zeros+"0";              
+                
+            }
+            aux=zeros+aux;
+            length=32;
+        }
         if (length > src2) {
             String rot = aux.substring(length - src2.intValue());
             String old = aux.substring(0, length - src2.intValue());
@@ -610,6 +638,8 @@ public class Operation {
             concat = concat + old;
         }
         Long result = Long.parseLong(concat, 2);
+        
+       // System.out.println("Result:"+Long.toHexString(Long.rotateRight(rn, src2.intValue())));
         this.mov(rd, result);
     }
 
@@ -618,6 +648,22 @@ public class Operation {
         int length = hexSrc2.length();
         if (length > 8) {
             hexSrc2 = hexSrc2.substring(length - 8);
+        }
+        
+        
+        if("pc".equals(rd) || "r15".equals(rd))
+        {           
+            rd="r15";
+            this.branchesExecute+=1;
+            this.pcCounter=(int) (src2/4);
+        }
+        if("r15_update".equals(rd))
+        {
+            rd="r15";
+        }
+        if("lr".equals(rd))
+        {
+            rd="r14";
         }
         bankRegister.setRegister(rd, "0x" + hexSrc2);
     }
@@ -702,12 +748,12 @@ public class Operation {
         }
 
         if (binaryRn.charAt(0) != binaryResult.charAt(0)) {
-            if (op == "add") {
+            if ("add".equals(op)) {
                 if (binaryRn.charAt(0) == binarySrc2.charAt(0)) {
                     result = true;
                 }
             }
-            if (op == "sub") {
+            if ("sub".equals(op)) {
                 if (binaryRn.charAt(0) != binarySrc2.charAt(0)) {
                     result = true;
                 }
@@ -786,6 +832,32 @@ public class Operation {
         this.conditionFlag.setCarry(this.verifyCarry(lenghtResult));
         //overflow 
         this.conditionFlag.setoVerflow(this.verifyOverflow(binaryRn, binarySrc2, binaryResult, lenghtResult, "sub"));
+    }
+
+    public void rrx(String rd, Long rnValue, Long src2Value) {
+        String rnBinary=Long.toBinaryString(rnValue);
+        if(rnBinary.length()<32)
+        {
+            
+            String aux="";
+            for (int i = 0; i < 32-rnBinary.length(); i++) {
+                aux=aux+"0";               
+                
+            }
+            rnBinary=aux+rnBinary;
+        }
+        if(this.conditionFlag.isCarry())
+        {
+            rnBinary="1"+rnBinary;
+        }
+        else
+        {
+            rnBinary="0"+rnBinary;
+        }
+       
+        this.mov(rd, Long.parseLong(rnBinary.substring(0,rnBinary.length()-1 ), 2));
+       
+        
     }
 
 }

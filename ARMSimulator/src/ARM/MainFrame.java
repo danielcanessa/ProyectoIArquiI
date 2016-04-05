@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -53,6 +54,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.conditionFlag = new ConditionFlags();
         this.fillConditionalFlags();
         this.codeGenerator = new CodeGeneration();
+        this.clean();
     }
 
     public void fillConditionalFlags() {
@@ -183,6 +185,11 @@ public class MainFrame extends javax.swing.JFrame {
         OutputText = new javax.swing.JTextArea();
         jScrollPane5 = new javax.swing.JScrollPane();
         codeText = new javax.swing.JTextArea();
+        jPanel4 = new javax.swing.JPanel();
+        ClockCyclesLabel = new javax.swing.JLabel();
+        ClockCyclesText = new javax.swing.JLabel();
+        runtimeLabel = new javax.swing.JLabel();
+        runtimeText = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -435,6 +442,46 @@ public class MainFrame extends javax.swing.JFrame {
         codeText.setRows(5);
         jScrollPane5.setViewportView(codeText);
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        ClockCyclesLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        ClockCyclesLabel.setText("Clock Cycles:");
+
+        ClockCyclesText.setText("jLabel3");
+
+        runtimeLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        runtimeLabel.setText("Runtime: ");
+
+        runtimeText.setText("jLabel3");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ClockCyclesLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ClockCyclesText)
+                .addGap(36, 36, 36)
+                .addComponent(runtimeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(runtimeText)
+                .addGap(125, 125, 125))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ClockCyclesLabel)
+                    .addComponent(ClockCyclesText)
+                    .addComponent(runtimeLabel)
+                    .addComponent(runtimeText))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -447,7 +494,9 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cleanMemoryButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1373, Short.MAX_VALUE)
                     .addComponent(jScrollPane3)
                     .addComponent(jScrollPane5))
@@ -482,7 +531,8 @@ public class MainFrame extends javax.swing.JFrame {
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(runButton)
                                     .addComponent(cleanMemoryButton)))
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -561,6 +611,8 @@ public class MainFrame extends javax.swing.JFrame {
         this.fillConditionalFlags();
         this.fillMemoryTable();
         this.fillRegisterTable();
+        this.ClockCyclesText.setText("0");
+        this.runtimeText.setText("0s");
 
     }
     private void saveMemoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMemoryButtonActionPerformed
@@ -669,13 +721,32 @@ public class MainFrame extends javax.swing.JFrame {
 
                 for (int i = operation.getPCCounter(); i < lines.length; i = operation.getPCCounter()) {
                     if (operation.error == false) {
-                        System.out.println("Line: " + lines[i]);
-                        operation.selectOperation(lines[i]);
-                        this.fillConditionalFlags();
-                        this.fillMemoryTable();
-                        this.fillRegisterTable();
+                        if (operation.branchesExecute < 1000) {
+                            //System.out.println("Line: " + lines[i]);
+                            operation.selectOperation(lines[i]);
 
-                    } else {                        
+                            this.ClockCyclesText.setText("" + operation.clockCycles);
+                            float runTime = (float) (0.00001 * operation.clockCycles);
+                            
+                            this.runtimeText.setText("" + runTime + "s");
+                            this.fillConditionalFlags();
+                            this.fillMemoryTable();
+                            this.fillRegisterTable();
+                        } else {
+                            int dialogButton = JOptionPane.YES_NO_OPTION;
+                            int dialogResult = JOptionPane.showConfirmDialog (null, "1000 branches. Would you like to exit the execution?","Warning",dialogButton);
+                            if(dialogResult  == 0)
+                            {                                
+                                break;
+                                
+                            } 
+                            else
+                            {
+                                operation.branchesExecute=0;
+                            }
+                        }
+
+                    } else {
                         break;
                     }
 
@@ -822,6 +893,8 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel CarryLabel;
     private javax.swing.JLabel CarryText;
+    private javax.swing.JLabel ClockCyclesLabel;
+    private javax.swing.JLabel ClockCyclesText;
     private javax.swing.JLabel NegativeLabel;
     private javax.swing.JLabel NegativeText;
     private javax.swing.JTextArea OutputText;
@@ -843,6 +916,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -855,6 +929,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioButtonWords;
     private javax.swing.JTable registerTable;
     private javax.swing.JButton runButton;
+    private javax.swing.JLabel runtimeLabel;
+    private javax.swing.JLabel runtimeText;
     private javax.swing.JButton saveMemoryButton;
     // End of variables declaration//GEN-END:variables
 }
