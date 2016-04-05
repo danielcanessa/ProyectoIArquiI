@@ -1,2 +1,1 @@
-mov r1, #0x400
-ldr r2,r1,#0
+mov pc, #10
