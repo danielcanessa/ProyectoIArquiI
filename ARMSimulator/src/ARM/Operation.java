@@ -159,6 +159,9 @@ public class Operation {
             if (instruction.contains("rrx ")) {
                 this.rrx(rd, rnValue, src2Value);
             }
+            if (instruction.contains("adc ")) {
+                this.adc(rd, rnValue, src2Value);
+            }
         }
 
     }
@@ -858,6 +861,16 @@ public class Operation {
         this.mov(rd, Long.parseLong(rnBinary.substring(0,rnBinary.length()-1 ), 2));
        
         
+    }
+
+    private void adc(String rd, Long rnValue, Long src2Value) {
+        Long result=rnValue+src2Value;
+        if(this.conditionFlag.isCarry())
+            
+        {
+            result+=1;
+        }
+       this.mov(rd, result);
     }
 
 }

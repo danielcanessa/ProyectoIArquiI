@@ -1,1 +1,26 @@
+<<<<<<< HEAD
 MVN R0,#0XCC
+=======
+<<<<<<< HEAD
+mov r1, #0xf
+ror r1, r1, #4
+mov r2, #0x7
+mov r3, #0
+ror r2, r2, #4
+cmn r1,r2
+rrx r3, r3,#4
+mov r0, #5
+adc r0,r0,r0
+=======
+<<<<<<< HEAD
+mov pc,#10
+=======
+<<<<<<< HEAD
+mov pc, #10
+=======
+ADD R0,R1,R2
+SUB R4,R5,R6
+>>>>>>> 49d82675e485b04a50265562de79d0ca6fda8f88
+>>>>>>> 84819d339bc188dded5b5a735d51f141eeb5c070
+>>>>>>> origin/master
+>>>>>>> 8ab955fafb6646081ca08387a4d47cff80167761
