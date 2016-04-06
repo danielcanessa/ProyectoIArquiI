@@ -1,33 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Label.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/ConditionFlags.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/CreateLexicalSyntacticAnalyzers.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/LexicalAnalyzer.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/TextLineNumber.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/HashLabel.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/CodeGeneration.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/WriteTxtFile.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/MainFrame.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Register.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Lexical.flex</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Memory.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/SyntacticAnalizer.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/ReserveInstructions.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Syntactic.cup</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/Operation.java</file>
-            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI/ARMSimulator/src/ARM/sym.java</file>
-=======
-            <file>file:/C:/Users/Felipe/Desktop/Proyecto1Arquitectura/ProyectoIArquiI/ARMSimulator/src/ARM/Syntactic.cup</file>
-            <file>file:/C:/Users/Felipe/Desktop/Proyecto1Arquitectura/ProyectoIArquiI/ARMSimulator/src/ARM/LexicalAnalyzer.java</file>
-            <file>file:/C:/Users/Felipe/Desktop/Proyecto1Arquitectura/ProyectoIArquiI/ARMSimulator/src/ARM/Lexical.flex</file>
-            <file>file:/C:/Users/Felipe/Desktop/Proyecto1Arquitectura/ProyectoIArquiI/ARMSimulator/src/ARM/CodeGeneration.java</file>
-            <file>file:/C:/Users/Felipe/Desktop/Proyecto1Arquitectura/ProyectoIArquiI/ARMSimulator/src/ARM/MainFrame.java</file>
->>>>>>> origin/master
+            <file>file:/C:/Users/Daniel/Desktop/ProyectoIArquiI-171ff7b2ad7726ef7715c6a4e49f9ce5ed818580/ARMSimulator/src/ARM/MainFrame.java</file>
         </group>
     </open-files>
 </project-private>
