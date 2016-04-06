@@ -658,6 +658,7 @@ public class Operation {
         {           
             rd="r15";
             this.branchesExecute+=1;
+            System.out.println(src2);
             this.pcCounter=(int) (src2/4);
         }
         if("r15_update".equals(rd))
