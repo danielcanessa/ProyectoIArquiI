@@ -101,7 +101,8 @@ public class Operation {
         }
 
         //instructions 
-        if (instruction.contains("cmp ") || instruction.contains("cmn ") || instruction.contains("mov ") || instruction.contains("mvn ")) {
+        if (instruction.contains("cmp ") || instruction.contains("cmn ") || instruction.contains("mov ") || instruction.contains("mvn ")
+                || instruction.contains("rrx ")) {
             if (instruction.contains("mov ")) {
                 this.mov(rd, src2Value);
             }
@@ -115,6 +116,9 @@ public class Operation {
             if (instruction.contains("cmp ")) {
                 Long rdValue = getRegisterValue(rd);
                 this.cmp(rdValue, src2);
+            }
+            if (instruction.contains("rrx ")) {
+                this.rrx(rd,src2Value);
             }
         } else {
             String rn = decodeInstruction.substring(decodeInstruction.indexOf(',') + 1, decodeInstruction.lastIndexOf(','));
@@ -156,9 +160,7 @@ public class Operation {
             if (instruction.contains("bic ")) {
                 this.bic(rd, rnValue, src2Value);
             }
-            if (instruction.contains("rrx ")) {
-                this.rrx(rd, rnValue, src2Value);
-            }
+           
             if (instruction.contains("adc ")) {
                 this.adc(rd, rnValue, src2Value);
             }
@@ -838,7 +840,7 @@ public class Operation {
         this.conditionFlag.setoVerflow(this.verifyOverflow(binaryRn, binarySrc2, binaryResult, lenghtResult, "sub"));
     }
 
-    public void rrx(String rd, Long rnValue, Long src2Value) {
+    public void rrx(String rd, Long rnValue) {
         String rnBinary=Long.toBinaryString(rnValue);
         if(rnBinary.length()<32)
         {
