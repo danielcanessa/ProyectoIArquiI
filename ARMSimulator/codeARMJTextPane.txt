@@ -1,1 +1,1 @@
-mvn r0,#0xff
+RRX R1,R2
